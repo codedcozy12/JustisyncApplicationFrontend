@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reset Password</title>
+  <script src="https://cdn.tailwindcss.com"></script> 
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+
+  <!-- Slide-up Reset Password Card -->
+  <div class="w-full max-w-md rounded-t-3xl shadow-2xl p-6 animate-slideUp relative bg-white">
+    
+    <!-- Decorative Top Bar -->
+    <div class="absolute top-2 left-1/2 transform -translate-x-1/2 w-12 h-1.5 rounded-full bg-gray-300"></div>
+     
+    <!-- Header -->
+     <div class="text-center mt-6">
+      <div class="mx-auto flex items-center justify-center w-14 h-14 rounded-full shadow-md bg-blue-600">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-white" fill="none"
+          viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M12 11c0-1.104-.896-2-2-2s-2 .896-2 2v1h4v-1zm2-3v4h1c1.104 0 2 .896 2 2s-.896 2-2 2h-1v4h-4v-4h-1c-1.104 0-2-.896-2-2s.896-2 2-2h1V8c0-1.104.896-2 2-2s2 .896 2 2z"/>
+        </svg>
+      </div>
+      <h2 class="mt-4 text-xl font-bold text-gray-800">
+        Reset Your Password
+      </h2>
+      <p class="mt-2 text-sm leading-relaxed text-gray-500">
+        Enter your new password below. Make sure it’s strong and secure.
+      </p>
+    </div>
+
+    <!-- Form -->
+    <form id="resetPasswordForm" class="mt-6 space-y-5">
+      <div>
+        <label for="newPassword" class="block text-sm font-medium mb-1 text-gray-700">New Password</label>
+        <input type="password" id="newPassword" name="newPassword" required
+          class="w-full px-4 py-3 rounded-xl border shadow-sm focus:outline-none focus:ring-2 transition border-gray-300 bg-gray-50 text-gray-800">
+      </div>
+
+      <div>
+        <label for="confirmPassword" class="block text-sm font-medium mb-1 text-gray-700">Confirm Password</label>
+        <input type="password" id="confirmPassword" name="confirmPassword" required
+          class="w-full px-4 py-3 rounded-xl border shadow-sm focus:outline-none focus:ring-2 transition border-gray-300 bg-gray-50 text-gray-800">
+      </div>
+
+      <button type="submit"
+        class="w-full py-3 rounded-xl font-semibold shadow-lg transition transform hover:scale-[1.01] active:scale-[.98] bg-blue-600 text-white">
+        Reset Password
+      </button>
+    </form>
+
+    <!-- Back to Login -->
+    <div class="mt-5 text-center">
+      <a href="login.html" class="text-sm font-medium text-blue-600 hover:underline">Back to Login</a>
+    </div>
+  </div>
+
+  <!-- Tailwind Animation -->
+   <style>
+    @keyframes slideUp {
+      from { transform: translateY(100%); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    .animate-slideUp {
+      animation: slideUp 0.45s ease-out;
+    }
+  </style>
+</body>
+</html>

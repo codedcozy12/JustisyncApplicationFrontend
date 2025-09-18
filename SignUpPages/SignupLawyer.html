@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>JustiSync — Lawyer Signup</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="shortcut icon" href="scale of justice.png" type="image/x-icon">
+</head>
+<body class="bg-gray-50">
+  <div class="max-w-3xl mx-auto p-6">
+    <!-- Logo -->
+    <div class="flex justify-center mb-4">
+      <!-- Update the src to your logo file -->
+      <img src="scale of justice2.png" alt="JustiSync Logo" class="h-12 w-auto">
+    </div>
+
+    <div class="bg-white rounded-xl shadow-md p-5">
+      <h1 class="text-lg font-semibold text-center text-gray-800 mb-4">Lawyer Signup</h1>
+
+      <!-- status messages -->
+      <div id="status" class="hidden mb-3 text-sm p-2 rounded-md"></div>
+
+      <form id="lawyerSignupForm" enctype="multipart/form-data" class="space-y-4 text-sm">
+        <!-- row 1 -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div>
+            <label class="block font-medium text-gray-700">Username</label>
+            <input name="username" id="username" type="text" required
+                   class="mt-1 w-full rounded-md border border-gray-300 p-2 focus:ring-indigo-500 focus:border-indigo-500">
+          </div>
+          <div>
+            <label class="block font-medium text-gray-700">Email</label>
+            <input name="email" id="email" type="email" required
+                   class="mt-1 w-full rounded-md border border-gray-300 p-2 focus:ring-indigo-500 focus:border-indigo-500">
+          </div>
+        </div>
+
+        <!-- row 2 -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div>
+            <label class="block font-medium text-gray-700">Password</label>
+            <input name="password" id="password" type="password" required
+                   class="mt-1 w-full rounded-md border border-gray-300 p-2 focus:ring-indigo-500 focus:border-indigo-500">
+          </div>
+          <div>
+            <label class="block font-medium text-gray-700">Confirm Password</label>
+            <input name="confirmPassword" id="confirmPassword" type="password" required
+                   class="mt-1 w-full rounded-md border border-gray-300 p-2 focus:ring-indigo-500 focus:border-indigo-500">
+            <p id="confirmPasswordError" class="text-red-600 mt-1 hidden">Passwords do not match.</p>
+          </div>
+        </div>
+
+        <!-- row 3: names -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+          <div>
+            <label class="block font-medium text-gray-700">First Name</label>
+            <input name="firstname" id="firstname" type="text" required
+                   class="mt-1 w-full rounded-md border border-gray-300 p-2 focus:ring-indigo-500 focus:border-indigo-500">
+          </div>
+          <div>
+            <label class="block font-medium text-gray-700">Middle Name</label>
+            <input name="middlename" id="middlename" type="text"
+                   class="mt-1 w-full rounded-md border border-gray-300 p-2 focus:ring-indigo-500 focus:border-indigo-500">
+          </div>
+          <div>
+            <label class="block font-medium text-gray-700">Last Name</label>
+            <input name="lastname" id="lastname" type="text" required
+                   class="mt-1 w-full rounded-md border border-gray-300 p-2 focus:ring-indigo-500 focus:border-indigo-500">
+          </div>
+        </div>
+
+        <!-- row 4 -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div>
+            <label class="block font-medium text-gray-700">Phone Number</label>
+            <input name="phone" id="phone" type="tel" required
+                   class="mt-1 w-full rounded-md border border-gray-300 p-2 focus:ring-indigo-500 focus:border-indigo-500">
+          </div>
+          <div>
+            <label class="block font-medium text-gray-700">Lawyer Specialization</label>
+            <!-- IMPORTANT: values should match your enum numeric values -->
+            <select name="lawyerSpecialization" id="lawyerSpecialization" required
+                    class="mt-1 w-full rounded-md border border-gray-300 p-2 focus:ring-indigo-500 focus:border-indigo-500">
+              <option value="">Select specialization</option>
+              <option value="0">Criminal Law</option>
+              <option value="1">Civil Law</option>
+              <option value="2">Family Law</option>
+              <option value="3">Corporate Law</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- row 5 -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div>
+            <label class="block font-medium text-gray-700">Law School Name (optional)</label>
+            <input name="lawSchoolName" id="lawSchoolName" type="text"
+                   class="mt-1 w-full rounded-md border border-gray-300 p-2 focus:ring-indigo-500 focus:border-indigo-500">
+          </div>
+          <div>
+            <label class="block font-medium text-gray-700">University Name</label>
+            <input name="universityName" id="universityName" type="text" required
+                   class="mt-1 w-full rounded-md border border-gray-300 p-2 focus:ring-indigo-500 focus:border-indigo-500">
+          </div>
+        </div>
+
+        <!-- row 6 -->
+        <div>
+          <label class="block font-medium text-gray-700">Bar Membership Number</label>
+          <input name="barMembershipNumber" id="barMembershipNumber" type="text" required
+                 class="mt-1 w-full rounded-md border border-gray-300 p-2 focus:ring-indigo-500 focus:border-indigo-500">
+        </div>
+
+        <!-- profile picture + preview -->
+        <div>
+          <label class="block font-medium text-gray-700">Profile Picture</label>
+          <input id="profilePic" name="profilePic" type="file" accept="image/*"
+                 class="mt-1 block w-full text-sm">
+          <div id="ppPreviewWrap" class="mt-2 hidden">
+            <img id="ppPreview" alt="Profile picture preview" class="h-16 w-16 rounded-full object-cover border"/>
+          </div>
+        </div>
+
+        <!-- Certificates (compact) -->
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <h3 class="text-sm font-semibold text-gray-800">Certificates</h3>
+            <button type="button" id="addCertificateBtn"
+                    class="px-2 py-1 rounded-md bg-indigo-600 text-white text-xs hover:bg-indigo-700">
+              + Add
+            </button>
+          </div>
+          <div id="certificatesContainer" class="space-y-2"></div>
+          <p class="text-[11px] text-gray-500 mt-1">Add Law School / University or other relevant certificates. PDF/JPG/PNG.</p>
+        </div>
+
+        <!-- submit -->
+        <div class="pt-2">
+          <button type="submit"
+                  class="w-full py-2 rounded-md bg-green-600 hover:bg-green-700 text-white text-sm font-medium">
+            Sign Up
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</body>
+</html>
