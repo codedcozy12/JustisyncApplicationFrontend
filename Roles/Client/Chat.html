@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JustiSync - Chat</title>
+  <link rel="shortcut icon" href="../../GeneralDashboard/scale of justice.png" type="image/x-icon">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.min.js"></script>
+  <style>
+    :root {
+      --js-primary: #0b3d91;
+      --js-accent: #f59e0b;
+      --js-bg: #f3f4f6;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #f1f1f1;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #ccc;
+      border-radius: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: #aaa;
+    }
+    .chat-bg {
+        background-color: #e5ddd5; 
+
+        background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23919191' fill-opacity='0.08'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    }
+  </style>
+</head>
+<body class="bg-[var(--js-bg)] text-gray-800">
+
+  <div class="flex h-screen">
+
+    <aside id="sidebar" class="w-64 bg-white shadow-md flex-shrink-0">
+    </aside>
+
+    <main class="flex-1 flex flex-col">
+      
+      <div class="flex-1 flex overflow-hidden">
+
+        <div class="w-1/6 bg-white border-r border-gray-200 flex flex-col">
+          <div class="p-4 border-b">
+              <h2 class="font-bold text-gray-800">Conversations</h2>
+            <input type="text" id="search-conversations" placeholder="Search..." class="w-full px-4 py-2 border rounded-full focus:outline-none focus:ring-2 focus:ring-[var(--js-primary)] mt-2">
+          </div>
+          <div id="conversations-list" class="flex-1 overflow-y-auto custom-scrollbar">
+
+            <div class="p-4 text-center text-gray-800">Loading conversations...</div>
+          </div>
+        </div>
+
+        <div id="chat-window" class="flex-1 flex flex-col chat-bg">
+         <div id="" class= " flex-col h-full">
+             
+            <div class="flex items-center justify-between p-4 bg-white border-b">
+              <div class="flex items-center">
+                <img id="chat-partner-avatar" src="Avatar.png" class="w-10 h-10 rounded-full mr-3 object-cover">
+                <div>
+                  <h3 id="chat-partner-name" class="font-semibold"></h3>
+                  <p id="chat-partner-status" class="text-xs text-green-500">Online</p>
+                </div>
+              </div>
+            </div>
+            </div>
+          <div id="no-chat-selected" class="flex flex-col items-center justify-center h-full text-gray-500">
+            <svg class="w-24 h-24" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
+            <h3 class="mt-4 text-xl">Select a conversation to start chatting</h3>
+          </div>
+
+            <div id="active-chat" class= " flex-col h-full">
+             
+                <div id="messages-area" class="flex-1 p-4 md:p-6 overflow-y-auto custom-scrollbar">
+            </div>
+
+            <div class="p-4 bg-gray-100 mt-12 border-t">
+              <form id="message-form" class="flex items-center">
+                <button type="button" class="text-gray-500 hover:text-[var(--js-primary)] p-2">
+                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path></svg>
+                </button>
+                <input id="message-input" type="text" placeholder="Type a message..." autocomplete="off" class="flex-1 px-4 py-2 border rounded-full focus:outline-none focus:ring-2 focus:ring-[var(--js-primary)]">
+                <button type="button" class="text-gray-500 hover:text-[var(--js-primary)] p-2">
+                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                </button>
+                <button type="submit" class="ml-3 bg-[var(--js-primary)] text-white p-2 rounded-full hover:bg-blue-800 transition">
+                  <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <script src="Chat.js"></script>
+</body>
+</html>

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registrar Management</title>
+  <link rel="stylesheet" href="scale of justice.png" type="image/x-icon">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<body class="bg-gray-100">
+  <div class="min-h-screen bg-gray-50 p-6">
+    <!-- Header -->
+    <header class="mb-8 flex justify-between items-center">
+      <h1 class="text-3xl font-bold text-gray-800">Registrar Management</h1>
+      <a href="AdminDashboard.html" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-lg shadow-sm">
+        ← Back to Dashboard
+      </a>
+    </header>
+
+    <!-- Add Registrar Button -->
+    <section class="bg-white rounded-2xl shadow-md p-6 mb-10">
+      <h2 class="text-xl font-semibold text-gray-700 mb-4">Add New Registrar</h2>
+      <p class="text-gray-600 mb-4">To add a new registrar, please use the dedicated signup page. Click the button below to navigate there.</p>
+      <a href="/SignUpPages/SignUpRegistrar.html" 
+         class="inline-block bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
+        Go to Registrar Signup Page
+      </a>
+    </section>
+
+    <!-- Edit Registrar Form (hidden by default) -->
+    <section id="editRegistrarSection" class="bg-white rounded-2xl shadow-md p-6 mb-10 hidden">
+      <h2 id="editFormTitle" class="text-xl font-semibold text-gray-700 mb-4">Edit Registrar</h2>
+      <form id="editRegistrarForm" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <input type="hidden" id="editRegistrarId" />
+
+        <!-- Court Assigned -->
+        <div>
+          <label for="editCourtId" class="block text-sm font-medium text-gray-700 mb-2">Court Assigned</label>
+          <select id="editCourtId" name="CourtId" required
+                  class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring focus:ring-blue-400 bg-white">
+            <option value="">Loading courts...</option>
+          </select>
+        </div>
+
+        <div class="md:col-span-2 flex items-end gap-4">
+          <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition">Save Changes</button>
+          <button type="button" id="cancelEditBtn" class="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-400 transition">Cancel</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- Registrars List -->
+    <section class="bg-white rounded-2xl shadow-md p-6">
+      <h2 class="text-xl font-semibold text-gray-700 mb-4">Registrars List</h2>
+      <div class="overflow-x-auto">
+        <table class="w-full border-collapse">
+          <thead>
+            <tr class="bg-gray-100 text-gray-700">
+              <th class="px-4 py-2 text-left">Name</th>
+              <th class="px-4 py-2 text-left">Email</th>
+              <th class="px-4 py-2 text-left">Phone</th>
+              <th class="px-4 py-2 text-left">Court Assigned</th>
+              <th class="px-4 py-2 text-left">Status</th>
+              <th class="px-4 py-2 text-center">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="registrarsTableBody">
+            <!-- Registrar rows will be injected here by JavaScript -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+  <script src="ManageRegistrar.js"></script>
+</body>
+</html>

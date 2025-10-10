@@ -5,7 +5,8 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>JustiSync — Client Signup</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="shortcut icon" href="scale of justice2.png" type="image/x-icon">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <link rel="shortcut icon" href="scale of justice.png" type="image/x-icon">
   <style>
     /* Small helpers for file input preview */
     .avatar-preview {
@@ -31,26 +32,26 @@
       </div>
 
       <!-- Form -->
-      <form id="signupForm" class="p-6 grid gap-6">
+      <form id="signupClientForm" class="p-6 grid gap-6">
         <!-- Row: Names (2-col on md) -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
             <label class="block text-sm font-medium text-[#374151]">First name <span class="text-red-500">*</span></label>
-            <input name="firstname" required id="firstName"
+            <input name="FirstName" required id="firstName"
                    class="mt-1 w-full px-4 py-2 rounded-lg border border-[#E6EEF8] focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:border-transparent"
                    placeholder="John" />
           </div>
 
           <div>
             <label class="block text-sm font-medium text-[#374151]">Middle name</label>
-            <input name="middlename" id="middleName"
+            <input name="MiddleName" id="middleName"
                    class="mt-1 w-full px-4 py-2 rounded-lg border border-[#E6EEF8] focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:border-transparent"
                    placeholder="A." />
           </div>
 
           <div>
             <label class="block text-sm font-medium text-[#374151]">Last name <span class="text-red-500">*</span></label>
-            <input name="lastname" required id="lastName"
+            <input name="LastName" required id="lastName"
                    class="mt-1 w-full px-4 py-2 rounded-lg border border-[#E6EEF8] focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:border-transparent"
                    placeholder="Doe" />
           </div>
@@ -60,35 +61,44 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
             <label class="block text-sm font-medium text-[#374151]">Username <span class="text-red-500">*</span></label>
-            <input name="username" required id="userName"
+            <input name="Username" required id="userName"
                    class="mt-1 w-full px-4 py-2 rounded-lg border border-[#E6EEF8] focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:border-transparent"
                    placeholder="johndoe" />
           </div>
 
           <div>
             <label class="block text-sm font-medium text-[#374151]">Email <span class="text-red-500">*</span></label>
-            <input name="email" type="email" required id="email"
+            <input name="Email" type="email" required id="email"
                    class="mt-1 w-full px-4 py-2 rounded-lg border border-[#E6EEF8] focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:border-transparent"
                    placeholder="you@domain.com" />
           </div>
           <div>
             <label class="block text-sm font-medium text-[#374151]">Phone <span class="text-red-500">*</span></label>
-            <input name="phone" type="tel" required id="phoneNo"
+            <input name="PhoneNumber" type="tel" required id="phoneNo"
                    class="mt-1 w-full px-4 py-2 rounded-lg border border-[#E6EEF8] focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:border-transparent"
                    placeholder="+234 812 000 0000" />
           </div>
         </div>
 
         <!-- Password -->
-        <div class="relative">
-          <label class="block text-sm font-medium text-[#374151]">Password <span class="text-red-500">*</span></label>
-          <input id="password" name="password" type="password" required
-                 class="mt-1 w-full px-4 py-2 rounded-lg border border-[#E6EEF8] focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:border-transparent"
-                 placeholder="Choose a strong password" />
-          <button type="button" id="togglePwd"
-                  class="absolute right-2 top-9 text-sm text-[#6B7280] hover:text-[#0B3D91]">
-            Show
-          </button>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="relative">
+                <label class="block text-sm font-medium text-[#374151]">Password <span class="text-red-500">*</span></label>
+                <input id="password" name="Password" type="password" required
+                        class="mt-1 w-full px-4 py-2 rounded-lg border border-[#E6EEF8] focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:border-transparent"
+                        placeholder="Choose a strong password" />
+                <button type="button" id="togglePwd"
+                        class="absolute right-2 top-9 text-sm text-[#6B7280] hover:text-[#0B3D91]">
+                    Show
+                </button>
+            </div>
+            <div>
+                <label for="confirmPassword" class="block text-sm font-medium text-[#374151]">Confirm Password <span class="text-red-500">*</span></label>
+                <input id="confirmPassword" name="confirmPassword" type="password" required
+                        class="mt-1 w-full px-4 py-2 rounded-lg border border-[#E6EEF8] focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:border-transparent"
+                        placeholder="Re-enter your password" />
+                <p id="confirmPasswordError" class="text-red-500 text-xs mt-1 hidden">Passwords do not match.</p>
+            </div>
         </div>
 
         <!-- Profile picture upload -->
@@ -100,14 +110,14 @@
           <div class="flex-1">
             <label class="block text-sm font-medium text-[#374151]">Profile picture</label>
             <p class="text-xs text-[#6B7280] mb-2">JPG, PNG — max 5MB</p>
-
+            
             <label for="profilePic" class="inline-flex items-center gap-2 cursor-pointer px-3 py-2 rounded-lg border border-[#E6EEF8] bg-white hover:shadow-sm">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-[#0B3D91]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V8m0 0l5-5m-5 5h12" />
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[#6B7280]" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd" />
               </svg>
               <span class="text-sm text-[#0B3D91]">Choose file</span>
             </label>
-            <input id="profilePic" name="profilePic" type="file" accept="image/*" class="sr-only" />
+            <input id="profilePic" name="ProfilePictureUrl" type="file" accept="image/*" class="sr-only" />
             <p id="fileName" class="text-xs text-[#6B7280] mt-2"></p>
           </div>
         </div>
@@ -116,16 +126,16 @@
         <div class="pt-2">
           <button type="submit"
                   class="w-full inline-flex items-center justify-center gap-2 px-4 py-3 rounded-lg text-white font-medium shadow-sm bg-[#0B3D91] hover:bg-[#08306f] transition">
-            <svg xmlns="Login.html" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
             </svg>
             Create account
           </button>
         </div>
-        <p class="text-center text-sm text-[#6B7280]">Already have an account? <a href="#" class="text-[#0B3D91] font-medium">Sign in</a></p>
+        <p class="text-center text-sm text-[#6B7280]">Already have an account? <a href="../LoginPage/Login.html" class="text-[#0B3D91] font-medium">Sign in</a></p>
       </form>
     </div>
   </div>
-  <script src="Signup.js"></script>
+  <script src="SignUpClient.js"></script>
 </body>
 </html>

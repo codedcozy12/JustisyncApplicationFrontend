@@ -4,19 +4,20 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>JustiSync — Login</title>
+  <link rel="shortcut icon" href="scale of justice.png" type="image/x-icon">
   <script src="https://cdn.tailwindcss.com"></script>
 
   <!-- JustiSync color palette (edit these hex values to match your exact palette) -->
   <style>
     :root{
-      --js-primary: #0b3d91;       /* deep justice blue (primary) */
-      --js-primary-700: #092f6f;   /* darker for hover */
-      --js-accent: #f59e0b;        /* amber accent for highlights / CTA */
-      --js-bg: #f3f4f6;            /* page background */
-      --js-card: #ffffff;          /* card background */
-      --js-text: #0f172a;          /* primary text */
-      --js-muted: #6b7280;         /* muted text */
-      --js-border: #e6e9ef;        /* inputs border */
+      --js-primary: #0b3d91;
+      --js-primary-700: #092f6f;   
+      --js-accent: #f59e0b;        
+      --js-bg: #f3f4f6;            
+      --js-card: #ffffff;          
+      --js-text: #0f172a;          
+      --js-muted: #6b7280;         
+      --js-border: #e6e9ef;
     }
   </style>
 </head>
@@ -57,10 +58,10 @@
         <div>
           <div class="flex items-center justify-between">
             <label for="password" class="block text-sm` font-medium" style="color:var(--js-text)">Password</label>
-            <a href="ForgotPassword.html" class="text-sm font-medium hover:underline" style="color:var(--js-primary)">
+            <a href="/LoginPage/ForgotPassword.html" class="text-xs font-medium" style="color:var(--js-primary)">
               Forgot password?
+            </a>
           </div>
-
           <input
             id="password"
             name="password"
@@ -102,7 +103,7 @@
       <!-- Signup CTA -->
       <p class="mt-6 text-center text-sm" style="color:var(--js-muted)">
         Don't have an account?
-        <a href="/signup.html" class="font-medium ml-1" style="color:var(--js-primary)">Sign up</a>
+        <a href="/SignUpPages/SignUpClient.html" class="font-medium ml-1" style="color:var(--js-primary)">Sign up</a>
       </p>
     </div>
     <!-- Optional footer / accent bar -->

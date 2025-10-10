@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Judge Management</title>
+  <link rel="stylesheet" href="scale of justice.png" type="image/x-icon">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body class="bg-gray-100">
+  <div class="min-h-screen bg-gray-50 p-6">
+    <header class="mb-8 flex justify-between items-center">
+      <h1 class="text-3xl font-bold text-gray-800">Judge Management</h1>
+      <a href="AdminDashboard.html" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-lg shadow-sm">
+        ← Back to Dashboard
+      </a>
+    </header>
+
+    <section class="bg-white rounded-2xl shadow-md p-6 mb-10">
+      <h2 class="text-xl font-semibold text-gray-700 mb-4">Add New Judge</h2>
+      <p class="text-gray-600 mb-4">Judges are created via the Judge signup process. Click the button below to create a new user who can be assigned the Judge role.</p>
+      <a href="/SignUpPages/SignUpJudge.html" 
+         class="inline-block bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
+        Go to Signup Page
+      </a>
+    </section>
+
+    <section id="editJudgeSection" class="bg-white rounded-2xl shadow-md p-6 mb-10 hidden">
+      <h2 id="editFormTitle" class="text-xl font-semibold text-gray-700 mb-4">Edit Judge</h2>
+      <form id="editJudgeForm" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <input type="hidden" id="editJudgeId" />
+
+        <div>
+          <label for="editCourtAssignedId" class="block text-sm font-medium text-gray-700 mb-2">Court Assigned</label>
+          <select id="editCourtAssignedId" name="CourtAssignedId" required
+                  class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring focus:ring-blue-400 bg-white">
+            <option value="">Loading courts...</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="editAppointmentDate" class="block text-sm font-medium text-gray-700 mb-2">Appointment Date</label>
+          <input type="date" id="editAppointmentDate" name="AppointmentDate"
+                 class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring focus:ring-blue-400" />
+        </div>
+
+        <div class="md:col-span-2 flex items-end gap-4">
+          <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition">Save Changes</button>
+          <button type="button" id="cancelEditBtn" class="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-400 transition">Cancel</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="bg-white rounded-2xl shadow-md p-6">
+      <h2 class="text-xl font-semibold text-gray-700 mb-4">Judges List</h2>
+      <div class="overflow-x-auto">
+        <table class="w-full border-collapse">
+          <thead>
+            <tr class="bg-gray-100 text-gray-700">
+              <th class="px-4 py-2 text-left">Name</th>
+              <th class="px-4 py-2 text-left">Email</th>
+              <th class="px-4 py-2 text-left">Phone</th>
+              <th class="px-4 py-2 text-left">Court Assigned</th>
+              <th class="px-4 py-2 text-left">Appointment Date</th>
+              <th class="px-4 py-2 text-left">Status</th>
+              <th class="px-4 py-2 text-center">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="judgesTableBody">
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <script src="ManageJudge.js"></script>
+</body>
+</html>

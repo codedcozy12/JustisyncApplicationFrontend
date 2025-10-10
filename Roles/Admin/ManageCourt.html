@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="scale of justice.png" type="image/x-icon">
+      <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+    <div class="min-h-screen bg-gray-50 p-6">
+  <header class="mb-8">
+    <h1 class="text-3xl font-bold text-gray-800">Court Management</h1>
+    <p class="text-gray-600">Add, edit, and manage courts in the system.</p>
+  </header>
+
+  <section class="bg-white rounded-2xl shadow-md p-6 mb-10">
+    <h2 class="text-xl font-semibold text-gray-700 mb-4">Add / Edit Court</h2>
+    <form id="courtForm" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Court Name</label>
+        <input type="text" placeholder="Enter court name"
+               class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring focus:ring-blue-400" />
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Court Type</label>
+        <input type="text" placeholder="e.g. High Court, Magistrate Court"
+               class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring focus:ring-blue-400" />
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Address</label>
+        <input type="text" placeholder="Enter address"
+               class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring focus:ring-blue-400" />
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">City</label>
+        <input type="text" placeholder="Enter city"
+               class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring focus:ring-blue-400" />
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">State</label>
+        <input type="text" placeholder="Enter state"
+               class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring focus:ring-blue-400" />
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Contact Email</label>
+        <input type="email" placeholder="Enter contact email"
+               class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring focus:ring-blue-400" />
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Contact Phone</label>
+        <input type="tel" placeholder="Enter phone number"
+               class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring focus:ring-blue-400" />
+      </div>
+
+     <div>
+       <label class="block text-sm font-medium text-gray-700 mb-2">Jurisdiction (Type)</label>   
+       <select name="Court Jurisdiction" id="Jurisdiction" required
+                    class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring focus:border-indigo-500">
+              <option value="">Select Jurisdiction</option>
+              <option value="0">Federal</option>
+              <option value="1">State</option>
+              <option value="2">Local</option>
+              <option value="3">Customary</option>
+              <option value="4">Sharia</option>
+            </select>
+     </div>
+      <div class="flex items-end">
+        <button type="submit"
+                class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
+          Add Court
+        </button>
+      </div>
+    </form>
+  </section>
+
+  <section class="bg-white rounded-2xl shadow-md p-6">
+    <h2 class="text-xl font-semibold text-gray-700 mb-4">Courts List</h2>
+    <div class="overflow-x-auto">
+      <table class="w-full border-collapse">
+        <thead>
+          <tr class="bg-gray-100 text-gray-700">
+            <th class="px-4 py-2 text-left">Name</th>
+            <th class="px-4 py-2 text-left">Type</th>
+            <th class="px-4 py-2 text-left">Address</th>
+            <th class="px-4 py-2 text-left">City</th>
+            <th class="px-4 py-2 text-left">State</th>
+            <th class="px-4 py-2 text-left">Contact Email</th>
+            <th class="px-4 py-2 text-left">Contact Phone</th>
+            <th class="px-4 py-2 text-left">Jurisdiction</th>
+            <th class="px-4 py-2 text-left">Is Active</th>
+            <th class="px-4 py-2 text-center">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="border-b">
+            <td class="px-4 py-2"></td>
+            <td class="px-4 py-2"></td>
+            <td class="px-4 py-2"></td>
+            <td class="px-4 py-2"></td>
+            <td class="px-4 py-2"></td>
+            <td class="px-4 py-2"></td>
+            <td class="px-4 py-2"></td>
+            <td class="px-4 py-2"></td>
+            <td class="px-4 py-2"></td>
+            <td class="px-4 py-2 text-center">
+              <button class="bg-green-500 text-white px-3 py-1 rounded-lg mr-2 hover:bg-green-600">Edit</button>
+              <button class="bg-red-500 text-white px-3 py-1 rounded-lg hover:bg-red-600">Delete</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</div>
+
+<section id="editCourtSection" class="bg-white rounded-2xl shadow-md p-6 mb-10 hidden">
+  <h2 class="text-xl font-semibold text-gray-700 mb-4">Edit Court</h2>
+  <form id="editCourtForm" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <input type="hidden" id="editCourtId" />
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-2">Contact Email</label>
+      <input id="editCourtEmail" type="email" class="w-full border rounded-lg px-3 py-2" required />
+    </div>
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-2">Contact Phone</label>
+      <input id="editCourtPhone" type="tel" class="w-full border rounded-lg px-3 py-2" required />
+    </div>
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-2">Jurisdiction (Type)</label>
+      <select id="editCourtJurisdiction" class="w-full border rounded-lg px-3 py-2" required>
+        <option value="">Select Jurisdiction</option>
+        <option value="0">Federal</option>
+        <option value="1">State</option>
+        <option value="2">Local</option>
+        <option value="3">Customary</option>
+        <option value="4">Sharia</option>
+      </select>
+    </div>
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-2">Is Active</label>
+      <select id="editCourtIsActive" class="w-full border rounded-lg px-3 py-2" required>
+        <option value="true">Active</option>
+        <option value="false">Inactive</option>
+      </select>
+    </div>
+    <div class="flex items-end">
+      <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
+        Save Changes
+      </button>
+      <button type="button" id="cancelEditCourt" class="ml-4 bg-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-400 transition">
+        Cancel
+      </button>
+    </div>
+  </form>
+</section>
+<script src="ManageCourt.js"></script>
+</body>
+</html>

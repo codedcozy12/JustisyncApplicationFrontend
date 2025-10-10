@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manage Clients</title>
+  <link rel="stylesheet" href="scale of justice.png" type="image/x-icon">
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+  <div id="manageClientsModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white rounded-xl shadow-xl w-full max-w-6xl p-6 relative">
+
+      <a href="AdminDashboard.html" class="absolute top-3 left-3">
+        <button
+          onclick="closeModal('manageClientsModal')"
+          class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-1 px-3 rounded-lg shadow-sm">
+          ← Back to Dashboard
+        </button>
+      </a>
+
+      <h2 class="text-2xl font-bold text-center mb-6">Manage Clients / Users</h2>
+
+      <div class="overflow-x-auto">
+        <h3 class="text-xl font-semibold mb-4">All Clients</h3>
+        <table class="min-w-full border border-gray-300 rounded-lg overflow-hidden">
+          <thead class="bg-gray-200">
+            <tr>
+              <th class="border p-2 text-left">Name</th>
+              <th class="border p-2 text-left">Email</th>
+              <th class="border p-2 text-left">Phone</th>
+              <th class="border p-2 text-left">Status</th>
+              <th class="border p-2 text-left">Actions</th>
+            </tr>
+          </thead>
+            <tr></tr>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div id="clientDetailsModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+    <div class="bg-white rounded-xl shadow-xl w-full max-w-md p-6 relative">
+      <button 
+        onclick="closeModal('clientDetailsModal')" 
+        class="absolute top-3 right-3 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-1 px-3 rounded-lg shadow-sm">
+        ✕
+      </button>
+
+      <h2 class="text-xl font-bold mb-4">Client Details</h2>
+      <p><strong>ID:</strong> 1</p>
+      <p><strong>Name:</strong> John Doe</p>
+      <p><strong>Email:</strong> john@example.com</p>
+      <p><strong>Phone:</strong> +234 812 345 6789</p>
+      <p><strong>Status:</strong> Active</p>
+    </div>
+  </div>
+  </script>
+  <script src="ManageClient.js"></script>
+</body>
+</html>

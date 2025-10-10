@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Judge Details</title>
+  <link rel="stylesheet" href="scale of justice.png" type="image/x-icon">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body class="bg-gray-100">
+  <div class="min-h-screen bg-gray-50 p-6">
+    <header class="mb-8 flex justify-between items-center">
+      <h1 class="text-3xl font-bold text-gray-800">Judge Details</h1>
+      <a href="ManageJudge.html" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-lg shadow-sm">
+        ← Back to Manage Judges
+      </a>
+    </header>
+
+    <main class="bg-white rounded-2xl shadow-md p-8 max-w-4xl mx-auto">
+      <div id="loading-message" class="text-center text-gray-500">
+        <p>Loading judge details...</p>
+      </div>
+      <div id="judge-details-container">
+      </div>
+    </main>
+  </div>
+
+  <script src="JudgeDetails.js"></script>
+</body>
+</html>

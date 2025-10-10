@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Client Details</title>
+  <link rel="stylesheet" href="scale of justice.png" type="image/x-icon">
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+  <div class="container mx-auto p-6">
+    <div class="bg-white rounded-xl shadow-xl w-full max-w-4xl mx-auto p-6 relative">
+      <a href="ManageClient.html" class="absolute top-4 left-4 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-1 px-3 rounded-lg shadow-sm">
+        ← Back to Client List
+      </a>
+      <h2 class="text-2xl font-bold text-center mb-6">Client Information</h2>
+      
+      <div id="client-details-container" class="mt-8">
+        <p id="loading-message" class="text-center text-gray-500">Loading client details...</p>
+        
+      </div>
+    </div>
+  </div>
+  <script src="ClientDetails.js"></script>
+</body>
+</html>

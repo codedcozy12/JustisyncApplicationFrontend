@@ -3,10 +3,10 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>JustiSync — Lawyer Signup</title>
+  <title>JustiSync — Registrar Signup</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <link rel="shortcut icon" href="scale of justice.png" type="image/x-icon">
+  <link rel="shortcut icon" href="scale of justice2.png" type="image/x-icon">
   <style>
     .avatar-preview {
       width: 96px;
@@ -23,15 +23,15 @@
     <div class="bg-white rounded-2xl shadow-lg overflow-hidden border-t-4 border-[#D4AF37]">
       <!-- Header -->
       <div class="flex items-center gap-4 p-6 border-b border-[#E6EEF8]">
-        <img src="scale of justice2.png" alt="JustiSync Logo" class="h-12 w-12 object-contain" />
+        <img src="scale of justice.png" alt="JustiSync Logo" class="h-12 w-12 object-contain" />
         <div>
           <h1 class="text-xl font-semibold text-[#0B3D91]">JustiSync</h1>
-          <p class="text-sm text-[#6B7280]">Lawyer registration — create your account</p>
+          <p class="text-sm text-[#6B7280]">Registrar registration — create your account</p>
         </div>
       </div>
 
       <!-- Form -->
-      <form id="lawyerSignupForm" class="p-6 grid gap-6">
+      <form id="signupRegistrarForm" class="p-6 grid gap-6">
         <!-- Row: Names (3-col) -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
@@ -76,8 +76,7 @@
           </div>
         </div>
 
-
-        <!-- Password -->
+      <!-- Password -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div class="relative">
                 <label class="block text-sm font-medium text-[#374151]">Password <span class="text-red-500">*</span></label>
@@ -96,43 +95,24 @@
                         placeholder="Re-enter your password" />
                 <p id="confirmPasswordError" class="text-red-500 text-xs mt-1 hidden">Passwords do not match.</p>
             </div>
-        </div>
+          </div>
 
-        <!-- Row: Specialization / Bar Number -->
+          
+        <!-- Row: Court / Appointment Date -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label for="LawyerSpecialization" class="block text-sm font-medium text-[#374151]">Specialization <span class="text-red-500">*</span></label>
-            <select name="LawyerSpecialization" required id="LawyerSpecialization" class="mt-1 w-full px-4 py-2 rounded-lg border border-[#E6EEF8] focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:border-transparent bg-white">
-              <option value="">Select specialization</option>
-              <option value="0">Criminal Law</option>
-              <option value="1">Civil Law</option>
-              <option value="2">Family Law</option>
-              <option value="3">Corporate Law</option>
+            <label for="CourtId" class="block text-sm font-medium text-[#374151]">Court Assigned <span class="text-red-500">*</span></label>
+            <select name="CourtId" required id="CourtId" class="mt-1 w-full px-4 py-2 rounded-lg border border-[#E6EEF8] focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:border-transparent bg-white">
+              <option value="" disabled selected>Loading courts...</option>
             </select>
           </div>
           <div>
-            <label for="BarMembershipNumber" class="block text-sm font-medium text-[#374151]">Bar Membership No. <span class="text-red-500">*</span></label>
-            <input name="BarMembershipNumber" required id="BarMembershipNumber"
-                   class="mt-1 w-full px-4 py-2 rounded-lg border border-[#E6EEF8] focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:border-transparent"
-                   placeholder="NBA/LAW/12345" />
-          </div>
+            <label for="AppointmentDate" class="block text-sm font-medium text-[#374151]">Appointment Date</label>
+            <input name="AppointmentDate" type="date" id="AppointmentDate"
+                       class="mt-1 w-full px-4 py-2 rounded-lg border border-[#E6EEF8] focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:border-transparent" />
+            </div>
         </div>
 
-        <!-- Row: Education -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label for="UniversityName" class="block text-sm font-medium text-[#374151]">University Name <span class="text-red-500">*</span></label>
-            <input name="UniversityName" required id="UniversityName"
-                   class="mt-1 w-full px-4 py-2 rounded-lg border border-[#E6EEF8] focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:border-transparent"
-                   placeholder="University of Excellence" />
-          </div>
-          <div>
-            <label for="LawSchoolName" class="block text-sm font-medium text-[#374151]">Law School Name (Optional)</label>
-            <input name="LawSchoolName" id="LawSchoolName"
-                   class="mt-1 w-full px-4 py-2 rounded-lg border border-[#E6EEF8] focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:border-transparent"
-                   placeholder="Nigerian Law School, Lagos Campus" />
-          </div>
-        </div>
 
         <!-- Profile picture upload -->
         <div class="flex items-center gap-6">
@@ -144,26 +124,11 @@
             <p class="text-xs text-[#6B7280] mb-2">JPG, PNG — max 5MB</p>
             <label for="ProfilePictureUrl" class="inline-flex items-center gap-2 cursor-pointer px-3 py-2 rounded-lg border border-[#E6EEF8] bg-white hover:shadow-sm">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[#6B7280]" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd" />
+                <path d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" />
               </svg>
               <span class="text-sm text-[#0B3D91]">Choose file</span>
             </label>
             <input id="ProfilePictureUrl" name="ProfilePictureUrl" type="file" accept="image/*" class="sr-only" />
-          </div>
-        </div>
-
-        <!-- Certificates Upload -->
-        <div>
-          <label class="block text-sm font-medium text-[#374151]">Certificates</label>
-          <p class="text-xs text-[#6B7280] mb-2">Upload Law School, University, or other relevant certificates (PDF/JPG/PNG).</p>
-          <div class="flex items-center gap-4">
-            <input type="file" id="certificateInput" accept=".pdf,image/*" class="sr-only" />
-            <label for="certificateInput" class="inline-flex items-center gap-2 cursor-pointer px-3 py-2 rounded-lg border border-[#E6EEF8] bg-white hover:shadow-sm">
-              <span class="text-sm text-[#0B3D91]">+ Add Certificate</span>
-            </label>
-          </div>
-          <div id="certificatesList" class="mt-3 space-y-2">
-            <!-- Certificate items will be injected here by JS -->
           </div>
         </div>
 
@@ -178,6 +143,6 @@
       </form>
     </div>
   </div>
-  <script src="SignupLawyer.js"></script>
+  <script src="SignUpRegistrar.js"></script>
 </body>
 </html>

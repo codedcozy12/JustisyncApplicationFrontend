@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard - Overview</title>
+  <link rel="stylesheet" href="scale of justice.png" type="image/x-icon">
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+
+  <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+  <div class="bg-white rounded-xl shadow-xl w-full max-w-4xl p-6 relative">
+    
+    <a href="AdminDashboard.html" 
+      class="absolute top-3 left-3">
+      <button 
+        onclick="closeOverview()" 
+        class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-1 px-3 rounded-lg shadow-sm rounded-lg">
+        ← Back to Dashboard
+      </button>
+    </a>
+
+    <h2 class="text-2xl font-bold text-center mb-6">Admin Overview</h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+      <div class="bg-blue-100 p-4 rounded-xl text-center shadow">
+        <h3 class="text-xl font-semibold">Users</h3>
+        <p id="users-count" class="text-3xl font-bold text-blue-700">0</p>
+      </div>
+      <div class="bg-green-100 p-4 rounded-xl text-center shadow">
+        <h3 class="text-xl font-semibold">Lawyers</h3>
+        <p id="lawyers-count" class="text-3xl font-bold text-green-700">0</p>
+      </div>
+      <div class="bg-purple-100 p-4 rounded-xl text-center shadow">
+        <h3 class="text-xl font-semibold">Judges</h3>
+        <p id="judges-count" class="text-3xl font-bold text-purple-700">0</p>
+      </div>
+      <div class="bg-yellow-100 p-4 rounded-xl text-center shadow">
+        <h3 class="text-xl font-semibold">Registrars</h3>
+        <p id="registrars-count" class="text-3xl font-bold text-yellow-700">0</p>
+      </div>
+      <div class="bg-yellow-100 p-4 rounded-xl text-center shadow">
+        <h3 class="text-xl font-semibold">Clients</h3>
+        <p id="clients-count" class="text-3xl font-bold text-yellow-700">0</p>
+      </div>
+    </div>
+
+    <div class="bg-gray-50 p-6 rounded-xl shadow">
+      <h3 class="text-xl font-bold mb-4">Pending Verifications</h3>
+      <ul id="pending-verifications-list" class="list-disc pl-6 space-y-2 text-gray-700">
+        <li>Loading...</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<script>
+  function closeOverview() {
+    document.querySelector(".fixed").style.display = "none";
+  }
+</script>
+<script src="OverviewPage.js"></script>
+</body>
+</html>

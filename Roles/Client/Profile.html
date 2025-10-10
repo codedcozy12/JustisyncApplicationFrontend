@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JustiSync - My Profile</title>
+  <link rel="shortcut icon" href="../../GeneralDashboard/scale of justice.png" type="image/x-icon">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <style>
+    :root {
+      --js-primary: #0b3d91;
+      --js-accent: #f59e0b;
+      --js-bg: #f3f4f6;
+    }
+  </style>
+</head>
+<body class="bg-[var(--js-bg)] text-gray-800">
+
+  <div class="flex min-h-screen">
+
+    <aside class="w-64 bg-white shadow-md flex-shrink-0">
+      <div class="p-6 bg-[var(--js-primary)] text-white">
+        <h1 class="text-2xl font-bold">⚖️ JustiSync</h1>
+      </div>
+      <nav class="mt-6">
+        <a href="/Roles/Client/Client.html" class="flex items-center px-6 py-3 text-gray-600 hover:bg-gray-100">
+          <svg class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+          Dashboard
+        </a>
+        <a href="/Roles/Client/ClientCases.html" class="flex items-center px-6 py-3 text-gray-600 hover:bg-gray-100">
+          <svg class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+          My Cases
+        </a>
+        <a href="/Roles/Client/FindLawyer.html" class="flex items-center px-6 py-3 text-gray-600 hover:bg-gray-100">
+          <svg class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          Find a Lawyer
+        </a>
+        <a href="/Roles/Client/Profile.html" class="flex items-center px-6 py-3 text-gray-700 bg-gray-200 font-semibold">
+          <svg class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+          Profile
+        </a>
+      </nav>
+      <div class="absolute bottom-0 w-64">
+        <button id="logout-btn" class="w-full flex items-center px-6 py-4 text-red-500 hover:bg-red-50">
+          <svg class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+          Logout
+        </button>
+      </div>
+    </aside>
+
+    <main class="flex-1 p-8">
+
+      <header class="mb-8">
+        <h2 class="text-3xl font-bold text-gray-800">My Profile</h2>
+        <p class="text-gray-500">View and update your personal information.</p>
+      </header>
+
+      <section class="bg-white rounded-xl shadow-sm p-8 max-w-4xl mx-auto">
+        <form id="profile-form" class="space-y-6">
+
+          <div class="flex items-center space-x-6">
+            <img id="avatarPreview" class="h-24 w-24 rounded-full object-cover" src="Avatar.png" alt="Current profile photo">
+            <label for="profilePic" class="cursor-pointer">
+              <span class="block bg-[var(--js-primary)] text-white px-4 py-2 rounded-lg font-semibold hover:bg-blue-800 transition">
+                Change Photo
+              </span>
+              <input type="file" name="ProfilePictureUrl" id="profilePic" class="hidden" accept="image/*">
+            </label>
+            <span id="fileName" class="text-sm text-gray-500"></span>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div>
+              <label for="firstName" class="block text-sm font-medium text-gray-700">First Name</label>
+              <input type="text" id="firstName" name="FirstName" required class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-[var(--js-primary)] focus:ring-[var(--js-primary)]">
+            </div>
+            <div>
+              <label for="middleName" class="block text-sm font-medium text-gray-700">Middle Name</label>
+              <input type="text" id="middleName" name="MiddleName" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-[var(--js-primary)] focus:ring-[var(--js-primary)]">
+            </div>
+            <div>
+              <label for="lastName" class="block text-sm font-medium text-gray-700">Last Name</label>
+              <input type="text" id="lastName" name="LastName" required class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-[var(--js-primary)] focus:ring-[var(--js-primary)]">
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label for="username" class="block text-sm font-medium text-gray-700">Username</label>
+              <input type="text" id="username" name="Username" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm bg-gray-100 shadow-sm focus:border-[var(--js-primary)] focus:ring-[var(--js-primary)]">
+            </div>
+            <div>
+              <label for="email" class="block text-sm font-medium text-gray-700">Email Address</label>
+              <div class="relative">
+                <input type="email" id="email" name="Email" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm bg-gray-100 cursor-not-allowed pr-24">
+                <span id="email-status" class="absolute inset-y-0 right-0 flex items-center pr-3 text-xs font-bold"></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label for="phoneNumber" class="block text-sm font-medium text-gray-700">Phone Number</label>
+              <input type="tel" id="phoneNumber" name="PhoneNumber" required class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-[var(--js-primary)] focus:ring-[var(--js-primary)]">
+            </div>
+            <div>
+              <label for="accountStatus" class="block text-sm font-medium text-gray-700">Account Status</label>
+              <div class="relative">
+                <input type="text" id="accountStatus" name="AccountStatus" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm bg-gray-100 cursor-not-allowed">
+              </div>
+            </div>
+          </div>
+
+          <div class="flex justify-end pt-4 space-x-4">
+            <button type="button" id="change-password-btn" class="bg-gray-200 text-gray-700 px-6 py-3 rounded-lg font-semibold hover:bg-gray-300 transition">
+              Change Password
+            </button>
+            <button type="submit" class="bg-[var(--js-primary)] text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-800 transition">
+              Update Profile
+            </button>
+          </div>
+
+        </form>
+      </section>
+
+    </main>
+  </div>
+
+  <script src="Profile.js"></script>
+</body>
+</html>
