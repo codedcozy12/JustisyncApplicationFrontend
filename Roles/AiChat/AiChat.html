@@ -13,7 +13,6 @@
       --js-accent: #f59e0b;
       --js-bg: #f3f4f6;
     }
-    /* Custom scrollbar for chat */
     #messages-area::-webkit-scrollbar {
       width: 6px;
     }
@@ -29,14 +28,19 @@
 <body class="bg-[var(--js-bg)] text-gray-800">
 
   <div class="flex h-screen">
-    <!-- Sidebar Navigation (Dynamically populated) -->
     <aside id="sidebar" class="w-64 bg-white shadow-md flex-shrink-0 hidden md:flex md:flex-col">
-        <!-- Sidebar content will be injected by AiChat.js -->
         <div class="p-6 bg-[var(--js-primary)] text-white">
             <h1 class="text-2xl font-bold">⚖️ JustiSync</h1>
         </div>
-        <nav class="mt-6 flex-1">
-            <!-- Links will be added here -->
+        <div class="p-4 border-b">
+            <button id="new-chat-btn" class="w-full flex items-center justify-center px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 transition">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+                New Chat
+            </button>
+        </div>
+        <div id="chat-history-list" class="flex-1 overflow-y-auto p-2 space-y-1">
+        </div>
+        <nav class="mt-auto border-t">
         </nav>
         <div class="p-4">
              <button id="logout-btn" class="w-full flex items-center justify-center px-4 py-3 text-red-500 hover:bg-red-50 rounded-lg">
@@ -46,9 +50,7 @@
         </div>
     </aside>
 
-    <!-- Main Chat Area -->
     <main class="flex-1 flex flex-col bg-gray-200">
-      <!-- Chat Header -->
       <header class="bg-white border-b border-gray-300 p-4 flex items-center shadow-sm z-10">
         <img src="Aiavatar.jpg" alt="AI Avatar" class="w-10 h-10 rounded-full mr-4">
         <div>
@@ -60,9 +62,7 @@
         </div>
       </header>
 
-      <!-- Messages Area -->
       <div id="messages-area" class="flex-1 p-6 overflow-y-auto space-y-4">
-        <!-- Welcome Message -->
         <div class="flex w-full mt-2 space-x-3 max-w-md">
             <div><img src="Aiavatar.jpg" class="w-8 h-8 rounded-full object-cover flex-shrink-0"></div>
             <div class="flex-1">
@@ -71,10 +71,8 @@
                 </div>
             </div>
         </div>
-        <!-- Chat messages will be appended here -->
       </div>
 
-      <!-- Message Input Form -->
       <footer class="bg-white border-t border-gray-300 p-4">
         <form id="message-form" class="flex items-center space-x-4">
           <input id="message-input" type="text" placeholder="Type your message here..." autocomplete="off"

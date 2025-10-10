@@ -75,11 +75,11 @@ document.getElementById("loginForm").addEventListener("submit", async function (
             if (role === "Admin") {
                 window.location.href = "/Roles/Admin/AdminDashboard.html";
             } else if (role === "Lawyer") {
-                window.location.href = "/Dashboard/Lawyer.html";
+                window.location.href = "/Roles/Lawyer/Lawyer.html";
             } else if (role === "Client") {
-                window.location.href = "/Dashboard/Client.html";
+                window.location.href = "/Roles/Client/Client.html";
             } else if (role === "Judge") {
-                window.location.href = "/Dashboard/Judge.html";
+                window.location.href = "/Roles/Judge/Judge.html";
             } else {
                 window.location.href = "/dashboard.html";
             }

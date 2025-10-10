@@ -37,68 +37,58 @@
 </head>
 <body class="bg-[var(--js-bg)] text-gray-800">
 
-  <div class="flex h-screen">
+  <div class="flex h-screen overflow-hidden">
 
-    <aside id="sidebar" class="w-64 bg-white shadow-md flex-shrink-0">
-    </aside>
-
-    <main class="flex-1 flex flex-col">
-      
-      <div class="flex-1 flex overflow-hidden">
-
-        <div class="w-1/6 bg-white border-r border-gray-200 flex flex-col">
+        <div class="w-full md:w-1/3 lg:w-1/4 bg-white border-r border-gray-200 flex flex-col">
+          <div class="p-4 border-b flex items-center justify-between">
+            <h2 class="font-bold text-xl text-gray-800">Chats</h2>
+            <button id="back-to-dashboard" title="Back to Dashboard" class="text-gray-500 hover:text-[var(--js-primary)] p-1 rounded-full">
+              <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+              </svg>
+            </button>
+          </div>
           <div class="p-4 border-b">
-              <h2 class="font-bold text-gray-800">Conversations</h2>
-            <input type="text" id="search-conversations" placeholder="Search..." class="w-full px-4 py-2 border rounded-full focus:outline-none focus:ring-2 focus:ring-[var(--js-primary)] mt-2">
+            <input type="text" id="search-conversations" placeholder="Search or start new chat" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--js-primary)] mt-2 text-sm">
           </div>
           <div id="conversations-list" class="flex-1 overflow-y-auto custom-scrollbar">
-
-            <div class="p-4 text-center text-gray-800">Loading conversations...</div>
+            <div class="p-4 text-center text-gray-500">Loading conversations...</div>
           </div>
         </div>
 
-        <div id="chat-window" class="flex-1 flex flex-col chat-bg">
-         <div id="" class= " flex-col h-full">
-             
-            <div class="flex items-center justify-between p-4 bg-white border-b">
-              <div class="flex items-center">
-                <img id="chat-partner-avatar" src="Avatar.png" class="w-10 h-10 rounded-full mr-3 object-cover">
-                <div>
-                  <h3 id="chat-partner-name" class="font-semibold"></h3>
-                  <p id="chat-partner-status" class="text-xs text-green-500">Online</p>
-                </div>
-              </div>
-            </div>
-            </div>
+        <div class="flex-1 flex flex-col chat-bg">
           <div id="no-chat-selected" class="flex flex-col items-center justify-center h-full text-gray-500">
             <svg class="w-24 h-24" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
             <h3 class="mt-4 text-xl">Select a conversation to start chatting</h3>
+            <p class="text-sm">Keep your conversations organized and secure.</p>
           </div>
 
-            <div id="active-chat" class= " flex-col h-full">
+          <div id="active-chat-container" class="hidden flex-col h-full">
+
+            <header class="flex items-center justify-between p-3 bg-gray-100 border-b border-gray-200 flex-shrink-0">
+              <div class="flex items-center">
+                <img id="chat-partner-avatar" src="../../assets/Avatar.png" class="w-10 h-10 rounded-full mr-3 object-cover">
+                <div>
+                  <h3 id="chat-partner-name" class="font-semibold">Select a Chat</h3>
+                  <p id="chat-partner-status" class="text-xs text-green-500">Online</p>
+                </div>
+              </div>
+            </header>
+
+            <div id="messages-area" class="flex-1 p-4 md:p-6 overflow-y-auto custom-scrollbar">
              
-                <div id="messages-area" class="flex-1 p-4 md:p-6 overflow-y-auto custom-scrollbar">
             </div>
 
-            <div class="p-4 bg-gray-100 mt-12 border-t">
+            <footer class="p-4 bg-gray-100 border-t border-gray-200 flex-shrink-0">
               <form id="message-form" class="flex items-center">
-                <button type="button" class="text-gray-500 hover:text-[var(--js-primary)] p-2">
-                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path></svg>
-                </button>
                 <input id="message-input" type="text" placeholder="Type a message..." autocomplete="off" class="flex-1 px-4 py-2 border rounded-full focus:outline-none focus:ring-2 focus:ring-[var(--js-primary)]">
-                <button type="button" class="text-gray-500 hover:text-[var(--js-primary)] p-2">
-                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                </button>
                 <button type="submit" class="ml-3 bg-[var(--js-primary)] text-white p-2 rounded-full hover:bg-blue-800 transition">
-                  <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+                  <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg> <!-- Send Icon -->
                 </button>
               </form>
-            </div>
+            </footer>
           </div>
         </div>
-      </div>
-
-    </main>
   </div>
 
   <script src="Chat.js"></script>

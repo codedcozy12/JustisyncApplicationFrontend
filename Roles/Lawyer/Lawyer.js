@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function () {
-    // const token = localStorage.getItem('token');
+    const token = localStorage.getItem('token');
     const userRole = localStorage.getItem('userRole');
     const lawyerNameSpan = document.getElementById('lawyer-name');
     const logoutBtn = document.getElementById('logout-btn');
