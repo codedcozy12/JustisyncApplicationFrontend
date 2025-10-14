@@ -18,14 +18,14 @@ document.addEventListener('DOMContentLoaded', function () {
     let connection = null;
     let allConversations = [];
 
-    if (!token || userRole !== 'Lawyer' || !currentUser) {
+    if (!token || userRole !== 'Lawyer' || !currentUser) { // Corrected role check
         window.location.href = '/LoginPage/Login.html';
         return;
     }
 
     initializeChatPage();
 
-    if (backToDashboardBtn) {
+    if (backToDashboardBtn) { // Corrected dashboard link
         backToDashboardBtn.addEventListener('click', () => {
             window.location.href = '/Roles/Lawyer/Lawyer.html';
         });
@@ -261,5 +261,4 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     searchInput.addEventListener('input', filterAndRenderConversations);
-
 });

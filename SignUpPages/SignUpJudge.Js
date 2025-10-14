@@ -1,10 +1,15 @@
 document.addEventListener('DOMContentLoaded', function () {
+    const token = localStorage.getItem('token');
+    if (!token) {
+        window.location.href = '/LoginPage/Login.html';
+        return;
+    }
+
     const form = document.getElementById('signupJudgeForm');
     const passwordInput = document.getElementById('password');
     const togglePwdBtn = document.getElementById('togglePwd');
     const courtSelect = document.getElementById('CourtAssignedId');
 
-    // --- Password Visibility Toggle ---
     if (togglePwdBtn && passwordInput) {
         togglePwdBtn.addEventListener('click', function () {
             const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
@@ -13,27 +18,25 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // --- Populate Courts Dropdown ---
     async function populateCourts() {
         try {
-            // Using the new 'active' endpoint for efficiency
-            const response = await fetch('https://localhost:7020/api/v1.0/Courts/active');
+            const response = await fetch('https://localhost:7020/api/v1.0/Courts',{
+                headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+            });
             if (!response.ok) {
                 throw new Error('Failed to load courts');
             }
             const result = await response.json();
-
-            // The API returns { isSuccess: bool, data: [...] }
             if (result && result.isSuccess && Array.isArray(result.data)) {
                 courtSelect.innerHTML = '<option value="" disabled selected>Select a court</option>'; // Reset
-                result.data.forEach(court => {
+                result.data.filter(court => court.isActive).forEach(court => {
                     const option = document.createElement('option');
                     option.value = court.id;
-                    option.textContent = `${court.name} - ${court.city}, ${court.state}`;
+                    option.textContent = `${court.name} ${court.state}`;
                     courtSelect.appendChild(option);
                 });
             } else {
-                 courtSelect.innerHTML = `<option value="" disabled>${result.message || 'Could not load courts'}</option>`;
+                 courtSelect.innerHTML = `<option value="" disabled>Could not load courts: ${result.message || ''}</option>`;
             }
         } catch (error) {
             console.error('Error fetching courts:', error);
@@ -41,12 +44,8 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    // --- Profile Picture Preview ---
     const profilePicInput = document.getElementById('ProfilePictureUrl');
-    const ppPreviewWrap = document.getElementById('ppPreviewWrap');
     const ppPreview = document.getElementById('ppPreview');
-    const defaultAvatar = 'Avatar.png';
-
     profilePicInput.addEventListener('change', function () {
         if (profilePicInput.files.length > 0) {
             const file = profilePicInput.files[0];
@@ -55,16 +54,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 ppPreview.src = e.target.result;
             };
             reader.readAsDataURL(file);
-        } else {
-            ppPreview.src = defaultAvatar;
         }
     });
 
-    // --- Form Submission ---
-    form.addEventListener('submit', function (e) {
+    form.addEventListener('submit', async function (e) {
         e.preventDefault();
 
-        // Password match check
         const password = form.elements['Password'].value;
         const confirmPassword = form.elements['confirmPassword'].value;
         const confirmPasswordError = document.getElementById('confirmPasswordError');
@@ -82,53 +77,45 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const formData = new FormData(form);
 
-        // API request to the Judges endpoint
-        fetch('https://localhost:7020/api/v1.0/Judges', {
-            method: 'POST',
-            body: formData
-        })
-        .then(async res => {
-            if (!res.ok) {
-                // Try to parse a structured error from the backend
-                const errorData = await res.json().catch(() => null);
-                const message = errorData?.message || `Request failed with status ${res.status}`;
-                throw new Error(message);
-            }
-            return res.json();
-        })
-        .then(result => {
-            if (result && result.isSuccess) {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Signup Successful',
-                    text: 'The judge account has been created! Please have them check their email to verify.',
-                    timer: 3000,
-                    showConfirmButton: false
-                });
-                // Store email for OTP verification page
-                localStorage.setItem('pendingEmail', form.elements['Email'].value);
-                sessionStorage.removeItem('otp_sent');
+        try {
+            const response = await fetch('https://localhost:7020/api/v1.0/Judges', {
+                method: 'POST',
+                body: formData
+            });
 
-                setTimeout(() => {
-                    window.location.href = "/LoginPage/VerifyOtp.html";
-                }, 3000);
+            const result = await response.json();
 
-                form.reset();
-                ppPreview.src = defaultAvatar;
-            } else {
-                 throw new Error(result.message || 'An unknown error occurred during signup.');
+            if (!response.ok || !result.isSuccess) {
+                throw new Error(result.message || 'An unknown error occurred during signup.');
             }
-        })
-        .catch(err => {
+
+            Swal.fire({
+                icon: 'success',
+                title: 'Signup Successful',
+                text: 'The judge account has been created! Please ask them to check their email to verify the account.',
+                timer: 3000,
+                showConfirmButton: false
+            });
+
+            localStorage.setItem('pendingEmail', form.elements['Email'].value);
+            sessionStorage.removeItem('otp_sent');
+
+            setTimeout(() => {
+                window.location.href = "/LoginPage/Login.html";
+            }, 3000);
+
+            form.reset();
+            ppPreview.src = 'Avatar.png';
+
+        } catch (error) {
             Swal.fire({
                 icon: 'error',
                 title: 'Signup Failed',
-                text: err.message
+                text: error.message
             });
-            console.error('Fetch error:', err);
-        });
+            console.error('Fetch error:', error);
+        }
     });
 
-    // --- Initial Data Load ---
     populateCourts();
 });

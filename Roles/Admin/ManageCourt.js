@@ -11,14 +11,13 @@ document.addEventListener('DOMContentLoaded', function () {
   const addCourtForm = document.getElementById('courtForm');
   const courtsTableBody = document.querySelector('tbody');
   const jurisdictionSelect = document.getElementById('jurisdictionSelect');
+  const editJurisdictionSelect = document.getElementById('editJurisdictionSelect');
 
   const editSection = document.getElementById('editCourtSection');
   const editForm = document.getElementById('editCourtForm');
   const cancelEditBtn = document.getElementById('cancelEditCourt');
 
   let courts = [];
-
-  // --- DATA FETCHING & RENDERING ---
 
   async function fetchJurisdictions() {
     try {
@@ -27,18 +26,21 @@ document.addEventListener('DOMContentLoaded', function () {
       });
       if (!response.ok) throw new Error('Failed to fetch jurisdictions');
       const result = await response.json();
-      if (result.isSuccess && Array.isArray(result.data)) {
+      if (Array.isArray(result)) {
         jurisdictionSelect.innerHTML = '';
-        result.data.forEach(j => {
+        editJurisdictionSelect.innerHTML = '';
+        result.forEach(j => {
           const option = document.createElement('option');
-          option.value = j.id;
-          option.textContent = j.name;
+          option.value = j.data.id;
+          option.textContent = `${j.data.subjectMatter} \nMonetary Limit: ${j.data.monetaryLimit}`;
           jurisdictionSelect.appendChild(option);
+          editJurisdictionSelect.appendChild(option.cloneNode(true)); // Also add to edit form select
         });
       }
     } catch (error) {
       console.error('Error fetching jurisdictions:', error);
       jurisdictionSelect.innerHTML = `<option value="">Error loading jurisdictions</option>`;
+      editJurisdictionSelect.innerHTML = `<option value="">Error loading jurisdictions</option>`;
     }
   }
 
@@ -52,7 +54,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     courtsData.forEach(court => {
       const jurisdictionsText = court.jurisdictions && court.jurisdictions.length > 0
-        ? court.jurisdictions.map(j => j.name).join(', ')
+        ? court.jurisdictions.map(j => j.subjectMatter).join(', ')
         : 'N/A';
 
       const row = document.createElement('tr');
@@ -91,14 +93,9 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   }
 
-  // --- FORM SUBMISSIONS & EVENT HANDLERS ---
-
   addCourtForm.addEventListener('submit', async function (e) {
     e.preventDefault();
     const formData = new FormData(addCourtForm);
-
-    // The backend expects 'JurisdictionIds' for a list of Guids.
-    // FormData handles multiple selections with the same name correctly.
     try {
       const response = await fetch(courtsApiUrl, {
         method: 'POST',
@@ -113,9 +110,17 @@ document.addEventListener('DOMContentLoaded', function () {
 
       addCourtForm.reset();
       fetchCourts();
-      alert('Court added successfully!');
+      Swal.fire({
+        icon: 'success',
+        title: 'Success!',
+        text: 'Court added successfully!'
+      });
     } catch (error) {
-      alert('Error: ' + error.message);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error!',
+        text: error.message
+      });
     }
   });
 
@@ -124,11 +129,10 @@ document.addEventListener('DOMContentLoaded', function () {
     const id = document.getElementById('editCourtId').value;
     if (!id) return;
 
-    // Matches CourtUpdateRequestDto
     const updateData = {
       contactEmail: document.getElementById('editCourtEmail').value,
       contactPhone: document.getElementById('editCourtPhone').value,
-      isActive: document.getElementById('editCourtIsActive').value === 'true'
+      jurisdictionIds: Array.from(editJurisdictionSelect.selectedOptions).map(option => option.value)
     };
 
     try {
@@ -141,17 +145,25 @@ document.addEventListener('DOMContentLoaded', function () {
         body: JSON.stringify(updateData)
       });
 
-      const result = await response.json();
-      if (!response.ok || !result.isSuccess) {
-        throw new Error(result.message || 'Failed to update court');
+      if (!response.ok) {
+        const errorResult = await response.json().catch(() => ({ message: 'Failed to update court' }));
+        throw new Error(errorResult.message || 'Failed to update court');
       }
 
       editSection.classList.add('hidden');
       editForm.reset();
-      fetchCourts(); // Refresh the list
-      alert('Court updated successfully!');
+      fetchCourts();
+      Swal.fire({
+        icon: 'success',
+        title: 'Updated!',
+        text: 'Court updated successfully!'
+      });
     } catch (error) {
-      alert('Error: ' + error.message);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error!',
+        text: error.message
+      });
     }
   });
 
@@ -160,22 +172,36 @@ document.addEventListener('DOMContentLoaded', function () {
     const courtId = target.dataset.id;
 
     if (target.classList.contains('delete-btn') && courtId) {
-      if (confirm('Are you sure you want to delete this court?')) {
-        try {
-          const response = await fetch(`${courtsApiUrl}/${courtId}`, {
-          method: 'DELETE',
-          headers: { 'Authorization': `Bearer ${token}` }
-          });
-          if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(errorText || 'Failed to delete court');
+      Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Yes, delete it!'
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          try {
+            const response = await fetch(`${courtsApiUrl}/${courtId}`, {
+            method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (!response.ok) {
+              const errorText = await response.text();
+              throw new Error(errorText || 'Failed to delete court');
+            }
+            fetchCourts();
+            Swal.fire(
+              'Deleted!',
+              'The court has been removed.',
+              'success'
+            );
+          } catch (error) {
+            Swal.fire('Error!', error.message, 'error');
           }
-          fetchCourts();
-          alert('Court deleted successfully.');
-        } catch (error) {
-          alert('Error: ' + error.message);
         }
-      }
+      });
     }
 
     if (target.classList.contains('edit-btn') && courtId) {
@@ -184,8 +210,15 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('editCourtId').value = court.id;
         document.getElementById('editCourtEmail').value = court.contactEmail || '';
         document.getElementById('editCourtPhone').value = court.contactPhone || '';
-        document.getElementById('editCourtIsActive').value = String(court.isActive);
 
+        const currentJurisdictionIds = court.jurisdictions.map(j => j.id);
+        Array.from(editJurisdictionSelect.options).forEach(option => {
+          if (currentJurisdictionIds.includes(option.value)) {
+            option.selected = true;
+          } else {
+            option.selected = false;
+          }
+        });
         editSection.classList.remove('hidden');
         window.scrollTo({ top: editSection.offsetTop, behavior: 'smooth' });
       }
@@ -197,7 +230,6 @@ document.addEventListener('DOMContentLoaded', function () {
     editForm.reset();
   });
 
-  // --- INITIALIZATION ---
   async function initializePage() {
     await fetchJurisdictions();
     await fetchCourts();

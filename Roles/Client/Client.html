@@ -73,53 +73,45 @@
       <section class="grid md:grid-cols-3 gap-6 mb-8">
         <div class="bg-white p-6 rounded-xl shadow-sm">
           <h4 class="text-gray-500 font-medium">Active Cases</h4>
-          <p class="text-3xl font-bold text-[var(--js-primary)]">3</p>
+          <p id="active-cases-title" class="text-3xl font-bold text-[var(--js-primary)]">3</p>
         </div>
         <div class="bg-white p-6 rounded-xl shadow-sm">
           <h4 class="text-gray-500 font-medium">Upcoming Hearings</h4>
-          <p class="text-3xl font-bold text-[var(--js-primary)]">1</p>
-        </div>
-        <div class="bg-white p-6 rounded-xl shadow-sm">
-          <h4 class="text-gray-500 font-medium">Unread Messages</h4>
-          <p class="text-3xl font-bold text-[var(--js-primary)]">5</p>
+          <p id="upcoming-hearings-title" class="text-3xl font-bold text-[var(--js-primary)]">1</p>
         </div>
       </section>
 
       <section class="bg-white rounded-xl shadow-sm p-6">
-        <h3 class="text-xl font-semibold text-gray-700 mb-4">My Recent Cases</h3>
+        <h3 id="recent-cases-title" class="text-xl font-semibold text-gray-700 mb-4">My Recent Cases</h3>
         <div class="overflow-x-auto">
           <table class="w-full border-collapse">
             <thead>
               <tr class="bg-gray-50 text-gray-600 text-sm">
+                <th class="px-4 py-3 text-left font-medium">Case Number</th>
                 <th class="px-4 py-3 text-left font-medium">Case Title</th>
                 <th class="px-4 py-3 text-left font-medium">Lawyer</th>
                 <th class="px-4 py-3 text-left font-medium">Status</th>
-                <th class="px-4 py-3 text-left font-medium">Last Update</th>
-                <th class="px-4 py-3 text-center font-medium">Actions</th>
+                <th class="px-4 py-3 text-left font-medium">Date Filed</th>
               </tr>
             </thead>
             <tbody id="cases-table-body">
-
-              <tr>
-                <td class="px-4 py-3 border-b">Civil Suit for Property Damage</td>
-                <td class="px-4 py-3 border-b">Barr. Adekunle Gold</td>
-                <td class="px-4 py-3 border-b">
-                  <span class="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-200 text-yellow-800">Discovery</span>
-                </td>
-                <td class="px-4 py-3 border-b">2 days ago</td>
-                <td class="px-4 py-3 border-b text-center">
-                  <a href="#" class="text-[var(--js-primary)] hover:underline font-semibold">View Details</a>
+              
+              <tr id="no-cases-message" class="hidden">
+                <td colspan="5" class="text-center py-10 text-gray-500">
+                  You have no cases matching the current filters.
                 </td>
               </tr>
-              <tr>
-                <td colspan="5" class="text-center py-10 text-gray-500 hidden" id="no-cases-message">
-                  You have no active cases.
+               <tr id="loading-spinner" class="">
+                <td colspan="5" class="text-center py-10">
+                    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--js-primary)] mx-auto"></div>
+                    <p class="mt-2 text-gray-500">Loading cases...</p>
                 </td>
               </tr>
             </tbody>
           </table>
         </div>
       </section>
+
 
     </main>
   </div>

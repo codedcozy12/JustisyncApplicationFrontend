@@ -1,4 +1,9 @@
 document.addEventListener('DOMContentLoaded', function () {
+    const token = localStorage.getItem('token');
+    if (!token) {
+        window.location.href = '/LoginPage/Login.html';
+        return;
+    }
     const judgesApiUrl = 'https://localhost:7020/api/v1.0/Judges';
     const courtsApiUrl = 'https://localhost:7020/api/v1.0/Courts';
 
@@ -24,7 +29,7 @@ document.addEventListener('DOMContentLoaded', function () {
         judges.forEach(judge => {
             const fullName = `${judge.firstName || ''} ${judge.middleName || ''} ${judge.lastName || ''}`.replace(/\s+/g, ' ').trim();
             const court = allCourts.find(c => c.id === judge.courtAssignedId);
-            const courtName = court ? `${court.name}, ${court.city}` : 'N/A';
+            const courtName = court ? `${court.name}` : 'N/A';
             const appointmentDate = judge.appointmentDate ? new Date(judge.appointmentDate).toLocaleDateString() : 'N/A';
             
             const isActive = judge.isActive;
@@ -43,7 +48,6 @@ document.addEventListener('DOMContentLoaded', function () {
                     <span class="font-semibold ${statusClass}">${statusText}</span>
                 </td>
                 <td class="px-4 py-2 text-center">
-                    <a href="JudgeDetails.html?id=${judge.id}" class="bg-blue-500 text-white px-3 py-1 rounded-lg mr-2 hover:bg-blue-600">View</a>
                     <button class="edit-btn bg-green-500 text-white px-3 py-1 rounded-lg mr-2 hover:bg-green-600 disabled:bg-gray-400 disabled:cursor-not-allowed" data-id="${judge.id}" ${!isActive ? 'disabled' : ''}>Edit</button>
                     <button class="delete-btn bg-red-500 text-white px-3 py-1 rounded-lg hover:bg-red-600 disabled:bg-gray-400 disabled:cursor-not-allowed" data-id="${judge.id}" ${!isActive ? 'disabled' : ''}>Delete</button>
                 </td>
@@ -53,7 +57,9 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     async function fetchAndPopulateCourts() {
         try {
-            const response = await fetch(courtsApiUrl);
+            const response = await fetch(courtsApiUrl,{
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
             if (!response.ok) throw new Error('Network response was not ok');
             const result = await response.json();
             allCourts = result.data || [];
@@ -63,7 +69,7 @@ document.addEventListener('DOMContentLoaded', function () {
             allCourts.filter(c => c.isActive).forEach(court => {
                 const option = document.createElement('option');
                 option.value = court.id;
-                option.textContent = `${court.name} - ${court.city}, ${court.state}`;
+                option.textContent = `${court.name} ${court.state}`;
                 
                 editCourtSelect.appendChild(option.cloneNode(true));
             });
@@ -76,7 +82,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
     async function fetchJudges() {
         try {
-            const response = await fetch(`${judgesApiUrl}`);
+            const response = await fetch(`${judgesApiUrl}`,{
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
             if (!response.ok) throw new Error('Network response was not ok');
             const result = await response.json();
             allJudges = result.data || [];

@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', function () {
-    // const token = localStorage.getItem('token');
+    const token = localStorage.getItem('token');
+    const user = JSON.parse(localStorage.getItem('user'));
     const userRole = localStorage.getItem('userRole');
     const logoutBtn = document.getElementById('logout-btn');
     const casesTableBody = document.getElementById('cases-table-body');
@@ -9,22 +10,21 @@ document.addEventListener('DOMContentLoaded', function () {
     const statusFilter = document.getElementById('status-filter');
 
     
-    if (!token || userRole !== 'Client') {
+    if (!token || userRole !== 'Client' || !user) {
         window.location.href = '/LoginPage/Login.html';
         return;
     }
 
-    
-    const allCases = [
-        { id: '3fa85f64-5717-4562-b3fc-2c963f66afa6', caseNumber: 'JUS-2024-001', title: 'Civil Suit for Property Damage', lawyerName: 'Barr. Adekunle Gold', status: 'Discovery', createdAt: '2024-05-10T10:00:00Z' },
-        { id: 'f8c3b3e8-8e3a-4b7a-9f1e-6d5c8a9b0c1d', caseNumber: 'JUS-2024-002', title: 'Contract Dispute with Supplier', lawyerName: 'Barr. Simi Ogunleye', status: 'In Court', createdAt: '2024-03-15T14:30:00Z' },
-        { id: 'a2b4c6d8-e0f2-4a1b-8c3d-9e1a7b5f6c8e', caseNumber: 'JUS-2024-003', title: 'Intellectual Property Claim', lawyerName: 'Barr. Falz Bahd', status: 'Open', createdAt: '2024-02-01T09:00:00Z' },
-        { id: 'd4e6f8a0-c2b4-4d5e-9a1b-8c3d7e9f0a2b', caseNumber: 'JUS-2023-089', title: 'Tenancy Agreement Violation', lawyerName: 'Barr. Adekunle Gold', status: 'Closed', createdAt: '2023-11-20T11:45:00Z' },
-    ];
+    let allCases = [];
+    const statusMap = {
+        0: 'Initiated', 1: 'Filed', 2: 'Scheduled', 3: '', 4: 'In Court', 5: 'Adjourned', 6: 'Closed', 7: 'Dismissed'
+    };
 
     function getStatusBadge(status) {
-        const statusMap = {
-            'Open': 'bg-green-200 text-green-800',
+        const statusText = statusMap[status] || 'Unknown';
+        const statusColorMap = {
+            'Initiated': 'bg-yellow-200 text-yellow-800',
+            'Filed': 'bg-blue-200 text-blue-800',
             'Discovery': 'bg-yellow-200 text-yellow-800',
             'In Court': 'bg-blue-200 text-blue-800',
             'Closed': 'bg-gray-200 text-gray-800',
@@ -42,17 +42,18 @@ document.addEventListener('DOMContentLoaded', function () {
             casesTableBody.appendChild(noCasesMessage);
         } else {
             noCasesMessage.classList.add('hidden');
-            casesToRender.forEach(caseItem => {
+            casesToRender.forEach(async caseItem => {
+                const law = await getLawyer(caseItem.lawyerId);
+                const lawyerName = law.data.firstName + ' ' + law.data.lastName || 'N/A';
                 const row = document.createElement('tr');
                 row.className = 'border-b hover:bg-gray-50';
                 row.innerHTML = `
                     <td class="px-4 py-3 text-gray-500 font-mono">${caseItem.caseNumber}</td>
                     <td class="px-4 py-3 font-semibold">${caseItem.title}</td>
-                    <td class="px-4 py-3">${caseItem.lawyerName || 'N/A'}</td>
-                    <td class="px-4 py-3">${getStatusBadge(caseItem.status)}</td>
+                    <td class="px-4 py-3">${lawyerName || 'N/A'}</td>
+                    <td class="px-4 py-3">${getStatusBadge(caseItem.status, caseItem.lawyerName)}</td>
                     <td class="px-4 py-3">${new Date(caseItem.createdAt).toLocaleDateString()}</td>
                     <td class="px-4 py-3 text-center">
-                        <a href="/Roles/Client/CaseDetails.html?id=${caseItem.id}" class="text-[var(--js-primary)] hover:underline font-semibold">View Details</a>
                     </td>
                 `;
                 casesTableBody.appendChild(row);
@@ -60,7 +61,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    
     function applyFilters() {
         const searchTerm = searchInput.value.toLowerCase();
         const selectedStatus = statusFilter.value;
@@ -68,7 +68,7 @@ document.addEventListener('DOMContentLoaded', function () {
         let filteredCases = allCases;
 
         if (selectedStatus !== 'all') {
-            filteredCases = filteredCases.filter(c => c.status === selectedStatus);
+            filteredCases = filteredCases.filter(c => c.status == selectedStatus);
         }
 
         if (searchTerm) {
@@ -91,13 +91,54 @@ document.addEventListener('DOMContentLoaded', function () {
     searchInput.addEventListener('input', applyFilters);
     statusFilter.addEventListener('change', applyFilters);
 
-    
-    function initializePage() {
+    async function fetchCases() {
+        loadingSpinner.classList.remove('hidden');
+        noCasesMessage.classList.add('hidden');
+        casesTableBody.innerHTML = '';
+        try {
+            const [casesResponse, lawyersResponse] = await Promise.all([
+                fetch(`https://localhost:7020/api/v1.0/Cases/client/${user.id}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                }),
+                fetch(`https://localhost:7020/api/v1.0/Lawyers`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                })
+            ]);
 
-        setTimeout(() => {
+            if (!casesResponse.ok) throw new Error('Failed to fetch cases.');
+            const casesResult = await casesResponse.json();
+            const lawyersResult = lawyersResponse.ok ? await lawyersResponse.json() : { data: [] };
+            const lawyers = lawyersResult.data || [];
+
+            if (casesResult.isSuccess && casesResult.data) {
+                allCases = casesResult.data.map(caseItem => {
+                    const lawyer = lawyers.find(l => l.userId === caseItem.lawyerId);
+                    return {
+                        ...caseItem,
+                        lawyerName: lawyer ? `Barr. ${lawyer.firstName} ${lawyer.lastName}` : 'N/A'
+                    };
+                });
+                renderCases(allCases);
+            } else {
+                noCasesMessage.classList.remove('hidden');
+            }
+        } catch (error) {
+            console.error('Error fetching cases:', error);
+            casesTableBody.innerHTML = `<tr><td colspan="6" class="text-center py-4 text-red-500">Error loading cases. Please try again.</td></tr>`;
+        } finally {
             loadingSpinner.classList.add('hidden');
-            renderCases(allCases);
-        }, 1000);
+        }
+    }
+
+    async function getLawyer(id) {
+        const res = await fetch(`https://localhost:7020/api/v1.0/Lawyers/${id}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        return res.json();
+    }
+
+    function initializePage() {
+        fetchCases();
     }
 
     initializePage();
