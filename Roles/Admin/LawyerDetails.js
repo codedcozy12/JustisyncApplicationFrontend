@@ -7,7 +7,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const urlParams = new URLSearchParams(window.location.search);
     const lawyerId = urlParams.get('id');
     
-    // --- PRE-FLIGHT CHECKS ---
     if (!token) {
         window.location.href = '/LoginPage/Login.html';
         return;
@@ -19,16 +18,15 @@ document.addEventListener('DOMContentLoaded', function () {
         return;
     }
 
-    // --- HELPER FUNCTIONS ---
     const getFullImageUrl = (url) => {
-        const defaultAvatar = '../../assets/Avatar.png'; // Corrected path
+        const defaultAvatar = '../../assets/Avatar.png';
         if (!url) return defaultAvatar;
         if (url.startsWith('http')) return url;
         return `https://localhost:7020/UserImages/Images/${url.replace(/^\//, '')}`;
     };
    
     const getCertificateFullImageUrl = (url) => {
-        const defaultAvatar = '#'; // Use '#' for a non-functional link if URL is missing
+        const defaultAvatar = '#';
         if (!url) return defaultAvatar;
         if (url.startsWith('http')) return url;
         return `https://localhost:7020/Certificate/Images/${url.replace(/^\//, '')}`;
@@ -63,30 +61,24 @@ document.addEventListener('DOMContentLoaded', function () {
                     timer: 2000,
                     showConfirmButton: false
                 });
-                // Update UI dynamically without a full page reload
                 const statusBadge = document.getElementById('status-badge');
-                const actionButtons = document.getElementById('action-buttons');
 
                 if (statusBadge) {
                     statusBadge.textContent = isApproved ? 'Approved' : 'Rejected';
                     statusBadge.className = `mt-2 inline-block px-3 py-1 text-sm font-semibold rounded-full ${isApproved ? 'bg-green-200 text-green-800' : 'bg-red-200 text-red-800'}`;
                 }
 
-                if (actionButtons) {
-                    // Hide the buttons after action is taken
-                    actionButtons.classList.add('hidden');
-                }
+                document.getElementById('reject-btn').disabled = !isApproved;
+                document.getElementById('approve-btn').disabled = isApproved;
             })
             .catch(error => Swal.fire('Error', error.message, 'error'));
     }
 
     /**
-     * Renders the lawyer's details onto the page.
-     * @param {object} lawyer - The lawyer data object.
+     * @param {object} lawyer
      */
     function renderLawyerDetails(lawyer) {
         try {
-            // --- Data Mapping ---
             const specializationMap = {
                 0: 'Criminal Law',
                 1: 'Civil Law',
@@ -97,15 +89,14 @@ document.addEventListener('DOMContentLoaded', function () {
             let statusText = 'Pending Verification';
             let statusClass = 'bg-yellow-200 text-yellow-800';
 
-            if (lawyer.isVerified) {
+            if (lawyer.verificationStatus == 0) {
                 statusText = 'Approved';
                 statusClass = 'bg-green-200 text-green-800';
-            } else if (lawyer.isRejected) {
+            } else if (lawyer.verificationStatus == 1) {
                 statusText = 'Rejected';
                 statusClass = 'bg-red-200 text-red-800';
             }
 
-            // --- HTML Template ---
             const detailsHtml = `
                 <div class="flex flex-col md:flex-row items-center gap-8">
                     <div class="flex-shrink-0">
@@ -137,14 +128,13 @@ document.addEventListener('DOMContentLoaded', function () {
                     </div>
                 </div>
 
-                <div id="action-buttons" class="mt-8 border-t border-gray-200 pt-6 flex justify-end gap-4 ${lawyer.isVerified || lawyer.isRejected ? 'hidden' : ''}">
-                    <button id="reject-btn" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors">Reject</button>
-                    <button id="approve-btn" class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors">Approve</button>
+                <div id="action-buttons" class="mt-8 border-t border-gray-200 pt-6 flex justify-end gap-4">
+                    <button id="reject-btn" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed" ${lawyer.isRejected ? 'disabled' : ''}>Reject</button>
+                    <button id="approve-btn" class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed" ${lawyer.isVerified ? 'disabled' : ''}>Approve</button>
                 </div>
             `;
             container.innerHTML = detailsHtml;
 
-            // --- Add Event Listeners Safely ---
             const approveBtn = document.getElementById('approve-btn');
             const rejectBtn = document.getElementById('reject-btn');
 
@@ -154,15 +144,15 @@ document.addEventListener('DOMContentLoaded', function () {
             if (rejectBtn) {
                 rejectBtn.addEventListener('click', () => handleVerification('reject'));
             }
+
+             document.getElementById('reject-btn').disabled = lawyer.verificationStatus != 2;
+             document.getElementById('approve-btn').disabled = lawyer.verificationStatus != 2;
         } catch (error) {
             console.error("Error rendering lawyer details:", error);
             container.innerHTML = `<p class="text-center text-red-500">An error occurred while displaying the lawyer's details.</p>`;
         }
     }
 
-    /**
-     * Fetches lawyer data from the API and initiates rendering.
-     */
     async function fetchLawyerDetails() {
         try {
             const response = await fetch(`${lawyersApiUrl}/${lawyerId}`, {
@@ -183,6 +173,5 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    // --- INITIALIZATION ---
     fetchLawyerDetails();
 });

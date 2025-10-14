@@ -1,32 +1,22 @@
 document.addEventListener('DOMContentLoaded', function () {
     const token = localStorage.getItem('token');
-    const userRole = localStorage.getItem('userRole');
-    const clientNameSpan = document.getElementById('client-name');
-    const caseTitle = document.getElementById("active-cases-title")
-    const upcomingHearings = document.getElementById("upcoming-hearings-title")
-    const logoutBtn = document.getElementById('logout-btn');
     const user = JSON.parse(localStorage.getItem('user'));
+    const userRole = localStorage.getItem('userRole');
+    const logoutBtn = document.getElementById('logout-btn');
     const casesTableBody = document.getElementById('cases-table-body');
     const noCasesMessage = document.getElementById('no-cases-message');
     const loadingSpinner = document.getElementById('loading-spinner');
+    const searchInput = document.getElementById('search-input');
+    const statusFilter = document.getElementById('status-filter');
 
-    if (!token || userRole !== 'Client') {
+    if (!token || userRole !== 'Lawyer' || !user) {
         window.location.href = '/LoginPage/Login.html';
         return;
     }
 
-    function fetchClientInfo() {
-        const user = JSON.parse(localStorage.getItem('user'));
-        if (user && user.firstName) {
-            clientNameSpan.textContent = user.firstName;
-        } else {
-            clientNameSpan.textContent = 'Client';
-        }
-    }
-
-     let allCases = [];
+    let allCases = [];
     const statusMap = {
-        0: 'Initiated', 1: 'Filed', 2: 'Scheduled', 3: '', 4: 'In Court', 5: 'Adjourned', 6: 'Closed', 7: 'Dismissed'
+        0: 'Initiated', 1: 'Filed', 2: 'In Progress', 3: 'Scheduled', 4: 'In Court', 5: 'Closed', 6: 'Rejected'
     };
 
     function getStatusBadge(status) {
@@ -34,15 +24,17 @@ document.addEventListener('DOMContentLoaded', function () {
         const statusColorMap = {
             'Initiated': 'bg-yellow-200 text-yellow-800',
             'Filed': 'bg-blue-200 text-blue-800',
-            'Discovery': 'bg-yellow-200 text-yellow-800',
+            'In Progress': 'bg-indigo-200 text-indigo-800',
+            'Scheduled': 'bg-purple-200 text-purple-800',
             'In Court': 'bg-blue-200 text-blue-800',
             'Closed': 'bg-gray-200 text-gray-800',
+            'Rejected': 'bg-red-200 text-red-800',
+            'Unknown': 'bg-gray-200 text-gray-800'
         };
-        const classes = statusColorMap[statusText] || 'bg-gray-200 text-gray-800';
+        const classes = statusColorMap[statusText];
         return `<span class="px-2 py-1 text-xs font-semibold rounded-full ${classes}">${statusText}</span>`;
     }
 
-    
     function renderCases(casesToRender) {
         casesTableBody.innerHTML = '';
 
@@ -52,17 +44,18 @@ document.addEventListener('DOMContentLoaded', function () {
         } else {
             noCasesMessage.classList.add('hidden');
             casesToRender.forEach(async caseItem => {
-                const law = await getLawyer(caseItem.lawyerId);
-                const lawyerName = law.data.firstName + ' ' + law.data.lastName || 'N/A';
+                let clientName = await getClient(caseItem.clientId)
+            
                 const row = document.createElement('tr');
                 row.className = 'border-b hover:bg-gray-50';
                 row.innerHTML = `
-                    <td class="px-4 py-3 text-gray-500 font-mono">${caseItem.caseNumber}</td>
+                    <td class="px-4 py-3 text-gray-500 font-mono">${caseItem.caseNumber || 'N/A'}</td>
                     <td class="px-4 py-3 font-semibold">${caseItem.title}</td>
-                    <td class="px-4 py-3">${lawyerName || 'N/A'}</td>
+                    <td class="px-4 py-3">${clientName.data.firstName + ' ' + clientName.data.lastName|| 'N/A'}</td>
                     <td class="px-4 py-3">${getStatusBadge(caseItem.status)}</td>
                     <td class="px-4 py-3">${new Date(caseItem.createdAt).toLocaleDateString()}</td>
                     <td class="px-4 py-3 text-center">
+                        <a href="/Roles/Lawyer/CaseDetails.html?id=${caseItem.id}" class="text-[var(--js-primary)] hover:underline font-semibold">View Details</a>
                     </td>
                 `;
                 casesTableBody.appendChild(row);
@@ -70,65 +63,54 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    // function applyFilters() {
-    //     const searchTerm = searchInput.value.toLowerCase();
-    //     const selectedStatus = statusFilter.value;
+    function applyFilters() {
+        const searchTerm = searchInput.value.toLowerCase();
+        const selectedStatus = statusFilter.value;
 
-    //     let filteredCases = allCases;
+        let filteredCases = allCases;
 
-    //     if (selectedStatus !== 'all') {
-    //         filteredCases = filteredCases.filter(c => c.status == selectedStatus);
-    //     }
+        if (selectedStatus !== 'all') {
+            filteredCases = filteredCases.filter(c => c.status == selectedStatus);
+        }
 
-    //     if (searchTerm) {
-    //         filteredCases = filteredCases.filter(c =>
-    //             c.title.toLowerCase().includes(searchTerm) ||
-    //             (c.lawyerName && c.lawyerName.toLowerCase().includes(searchTerm)) ||
-    //             c.caseNumber.toLowerCase().includes(searchTerm)
-    //         );
-    //     }
+        if (searchTerm) {
+            filteredCases = filteredCases.filter(c =>
+                c.title.toLowerCase().includes(searchTerm) ||
+                (c.clientName && c.clientName.toLowerCase().includes(searchTerm)) ||
+                (c.caseNumber && c.caseNumber.toLowerCase().includes(searchTerm))
+            );
+        }
 
-    //     renderCases(filteredCases);
-    // }
-    fetchClientInfo();
-    logoutBtn.addEventListener('click', () => {
-        localStorage.clear();
-        sessionStorage.clear();
-        window.location.href = '/LoginPage/Login.html';
-    });
-
-    // searchInput.addEventListener('input', applyFilters);
-    // statusFilter.addEventListener('change', applyFilters);
+        renderCases(filteredCases);
+    }
 
     async function fetchCases() {
         loadingSpinner.classList.remove('hidden');
         noCasesMessage.classList.add('hidden');
         casesTableBody.innerHTML = '';
         try {
-            const [casesResponse, lawyersResponse] = await Promise.all([
-                fetch(`https://localhost:7020/api/v1.0/Cases/client/${user.id}`, {
+            const [casesResponse, usersResponse] = await Promise.all([
+                fetch(`https://localhost:7020/api/v1.0/Cases/lawyer/${user.id}`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 }),
-                fetch(`https://localhost:7020/api/v1.0/Lawyers`, {
+                fetch(`https://localhost:7020/api/v1.0/Users`, { // Fetch all users to map client IDs to names
                     headers: { 'Authorization': `Bearer ${token}` }
                 })
             ]);
 
             if (!casesResponse.ok) throw new Error('Failed to fetch cases.');
             const casesResult = await casesResponse.json();
-            const lawyersResult = lawyersResponse.ok ? await lawyersResponse.json() : { data: [] };
-            const lawyers = lawyersResult.data || [];
+            const usersResult = usersResponse.ok ? await usersResponse.json() : { data: [] };
+            const users = usersResult.data || [];
 
             if (casesResult.isSuccess && casesResult.data) {
                 allCases = casesResult.data.map(caseItem => {
-                    const lawyer = lawyers.find(l => l.userId === caseItem.lawyerId);
+                    const client = users.find(u => u.id === caseItem.clientId);
                     return {
                         ...caseItem,
-                        lawyerName: lawyer ? `Barr. ${lawyer.firstName} ${lawyer.lastName}` : 'N/A'
+                        clientName: client ? `${client.firstName} ${client.lastName}` : 'Unknown Client'
                     };
                 });
-                caseTitle.textContent = `${allCases.length}`
-                upcomingHearings.textContent = `${allCases.filter(c => c.status === 2).length}`
                 renderCases(allCases);
             } else {
                 noCasesMessage.classList.remove('hidden');
@@ -141,17 +123,17 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    async function getLawyer(id) {
-        const res = await fetch(`https://localhost:7020/api/v1.0/Lawyers/${id}`, {
+      async function getClient(id) {
+        const res = await fetch(`https://localhost:7020/api/v1.0/Users/${id}`, {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         return res.json();
     }
 
-    function initializePage() {
-        fetchCases();
-        console.log("l")
-    }
 
-    initializePage();
+    logoutBtn.addEventListener('click', () => { localStorage.clear(); window.location.href = '/LoginPage/Login.html'; });
+    searchInput.addEventListener('input', applyFilters);
+    statusFilter.addEventListener('change', applyFilters);
+
+    fetchCases();
 });

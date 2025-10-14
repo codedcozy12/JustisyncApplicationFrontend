@@ -1,13 +1,14 @@
 document.addEventListener('DOMContentLoaded', function () {
-    // const token = localStorage.getItem('token');
+    const token = localStorage.getItem('token');
     const userRole = localStorage.getItem('userRole');
+    const user = JSON.parse(localStorage.getItem('user'));
     const form = document.getElementById('complete-case-form');
     const loadingContainer = document.getElementById('loading-container');
     const logoutBtn = document.getElementById('logout-btn');
-    const judgeSelect = document.getElementById('judgeId');
+    const courtSelect = document.getElementById('courtId');
 
     // --- Authentication Check ---
-    if (!token || userRole !== 'Lawyer') {
+    if (!token || userRole !== 'Lawyer' || !user) {
         window.location.href = '/LoginPage/Login.html';
         return;
     }
@@ -21,87 +22,121 @@ document.addEventListener('DOMContentLoaded', function () {
         return;
     }
 
-    // --- Fetch Initial Case Data (Placeholder) ---
+    // --- Fetch Initial Case Data ---
     async function fetchCaseDetails() {
-        // In a real app, fetch from `/api/v1.0/Cases/${caseId}`
-        const caseDetails = {
-            id: caseId,
-            title: 'Land Dispute',
-            description: 'A dispute over the ownership of a plot of land located at 123 Main St. The client claims ownership based on a deed from 1990, while the opposing party claims ownership via adverse possession.',
-            client: {
-                id: 'client-001',
-                firstName: 'Alice',
-                lastName: 'Johnson'
-            },
-            status: 0 // 'Initiated'
-        };
-
-        // Simulate network delay
-        setTimeout(() => {
-            populateForm(caseDetails);
+        try {
+            const response = await fetch(`https://localhost:7020/api/v1.0/Cases/${caseId}`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (!response.ok) throw new Error('Failed to fetch case details.');
+            const result = await response.json();
+            if (result.isSuccess && result.data) {
+                populateForm(result.data);
+            } else {
+                throw new Error(result.message || 'Could not load case data.');
+            }
+        } catch (error) {
+            Swal.fire('Error', error.message, 'error');
+            loadingContainer.innerHTML = `<p class="text-red-500">${error.message}</p>`;
+        } finally {
             loadingContainer.classList.add('hidden');
             form.classList.remove('hidden');
-        }, 1000);
+        }
     }
 
-    // --- Populate Judges Dropdown (Placeholder) ---
-    async function populateJudges() {
-        // In a real app, fetch from '/api/v1.0/Judges'
-        const judges = [
-            { id: 'judge-1', firstName: 'Bolanle', lastName: 'Adeolu' },
-            { id: 'judge-2', firstName: 'Chukwudi', lastName: 'Okafor' },
-            { id: 'judge-3', firstName: 'Fatima', lastName: 'Bello' },
-        ];
-
-        judgeSelect.innerHTML = '<option value="" disabled selected>Select a judge</option>';
-        judges.forEach(judge => {
-            const option = document.createElement('option');
-            option.value = judge.id;
-            option.textContent = `Hon. Justice ${judge.firstName} ${judge.lastName}`;
-            judgeSelect.appendChild(option);
-        });
+    // --- Populate Courts Dropdown ---
+    async function populateCourts() {
+        try {
+            const response = await fetch('https://localhost:7020/api/v1.0/Courts', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (!response.ok) throw new Error('Could not fetch courts.');
+            const result = await response.json();
+            if (result.isSuccess && result.data) {
+                const activeCourts = result.data.filter(c => c.isActive);
+                courtSelect.innerHTML = '<option value="" disabled selected>Select a court</option>';
+                activeCourts.forEach(court => {
+                    const option = document.createElement('option');
+                    option.value = court.id;
+                    option.textContent = `${court.name} ${court.state}`;
+                    courtSelect.appendChild(option);
+                });
+            }
+        } catch (error) {
+            console.error('Error populating courts:', error);
+            courtSelect.innerHTML = '<option value="">Error loading courts</option>';
+        }
     }
 
     // --- Populate Form with Data ---
-    function populateForm(data) {
-        document.getElementById('clientName').textContent = `${data.client.firstName} ${data.client.lastName}`;
+    async function populateForm(data) {
+        // Fetch client details to display name
+        try {
+            const clientRes = await fetch(`https://localhost:7020/api/v1.0/Users/${data.clientId}`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (clientRes.ok) {
+                const clientResult = await clientRes.json();
+                if (clientResult.isSuccess) {
+                    document.getElementById('clientName').textContent = `${clientResult.data.firstName} ${clientResult.data.lastName}`;
+                }
+            } else {
+                 document.getElementById('clientName').textContent = 'Client details unavailable';
+            }
+        } catch (e) {
+             document.getElementById('clientName').textContent = 'Error loading client name';
+        }
+
         document.getElementById('caseTitle').textContent = data.title;
         document.getElementById('caseDescription').textContent = data.description;
     }
 
     // --- Form Submission ---
-    form.addEventListener('submit', function (e) {
+    form.addEventListener('submit', async function (e) {
         e.preventDefault();
 
         const formData = new FormData(form);
-        const updateData = {
-            Id: caseId,
-            CaseNumber: formData.get('CaseNumber'),
-            JudgeId: formData.get('JudgeId'),
-            Status: parseInt(formData.get('Status'), 10)
-        };
+        const courtId = formData.get('courtId');
+        const description = formData.get('Description');
+        const lawyerId = user.id;
 
-        console.log('Submitting Case Update:', updateData);
+        // Manually add other required document properties
+        const fileInput = document.getElementById('documentFile');
+        if (fileInput.files.length > 0) {
+            formData.append('document.FileName', fileInput.files[0].name);
+        }
+        formData.append('document.CaseId', caseId);
 
-        // Placeholder for API call to update the case
-        // fetch(`https://localhost:7020/api/v1.0/Cases/${caseId}`, {
-        //     method: 'PUT', // or PATCH
-        //     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-        //     body: JSON.stringify(updateData)
-        // })
-        // .then(res => res.json()).then(result => { ... });
+        const url = `https://localhost:7020/api/v1.0/Cases/complete/${caseId}?lawyerId=${lawyerId}&courtId=${courtId}&Description=${encodeURIComponent(description)}`;
 
-        Swal.fire({
-            icon: 'success',
-            title: 'Case Filed!',
-            text: `Case number ${updateData.CaseNumber} has been successfully filed.`,
-            timer: 3000,
-            showConfirmButton: false
-        });
+        try {
+            const response = await fetch(url, {
+                method: 'PUT',
+                headers: { 'Authorization': `Bearer ${token}` },
+                body: formData
+            });
 
-        setTimeout(() => {
-            window.location.href = '/Dashboard/Lawyer.html';
-        }, 3000);
+            const result = await response.json();
+            if (!response.ok || !result.isSuccess) {
+                throw new Error(result.message || 'Failed to complete case filing.');
+            }
+
+            Swal.fire({
+                icon: 'success',
+                title: 'Case Filed!',
+                text: `The case has been successfully filed.`,
+                timer: 3000,
+                showConfirmButton: false
+            });
+
+            setTimeout(() => {
+                window.location.href = '/Roles/Lawyer/Lawyer.html';
+            }, 3000);
+
+        } catch (error) {
+            console.error('Error completing case filing:', error);
+            Swal.fire('Error', error.message, 'error');
+        }
     });
 
     // --- Logout Functionality ---
@@ -113,5 +148,5 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // --- Initial Page Load ---
     fetchCaseDetails();
-    populateJudges();
+    populateCourts();
 });

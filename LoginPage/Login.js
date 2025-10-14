@@ -70,7 +70,7 @@ document.getElementById("loginForm").addEventListener("submit", async function (
                 }
                 localStorage.setItem("userRole", role);
             }
-
+            
             // Redirect based on role
             if (role === "Admin") {
                 window.location.href = "/Roles/Admin/AdminDashboard.html";
@@ -80,8 +80,12 @@ document.getElementById("loginForm").addEventListener("submit", async function (
                 window.location.href = "/Roles/Client/Client.html";
             } else if (role === "Judge") {
                 window.location.href = "/Roles/Judge/Judge.html";
+            } else if (role == "Registrar") {
+                window.location.href = "/Roles/Registrar/Registrar.html";
             } else {
-                window.location.href = "/dashboard.html";
+                 window.location.href = "/dashboard.html";
+                console.warn("Unknown role, staying on login page.");
+                console.log(role);  
             }
         } else {
             // ✅ Handle "please confirm your email" case

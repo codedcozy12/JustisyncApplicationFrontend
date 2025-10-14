@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', function () {
     const registrarsApiUrl = 'https://localhost:7020/api/v1.0/Registrars';
     const courtsApiUrl = 'https://localhost:7020/api/v1.0/Courts';
+    const token = localStorage.getItem('token');
 
     const tableBody = document.getElementById('registrarsTableBody');
 
@@ -25,7 +26,6 @@ document.addEventListener('DOMContentLoaded', function () {
             const court = allCourts.find(c => c.id === registrar.courtId);
             const courtName = court ? `${court.name}, ${court.city}` : 'N/A';
 
-            // Determine status based on the isActive property from the API
             const isActive = registrar.isActive;
             const statusText = isActive ? 'Active' : 'Inactive';
             const statusClass = isActive ? 'text-green-600' : 'text-red-600';
@@ -36,12 +36,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 <td class="px-4 py-2">${fullName}</td>
                 <td class="px-4 py-2">${registrar.email || 'N/A'}</td>
                 <td class="px-4 py-2">${registrar.phoneNumber || 'N/A'}</td>
-                <td class="px-4 py-2">${courtName}</td>
+                <td class="px-4 py-2">${court.name || 'N/A'}</td>
                 <td class="px-4 py-2">
                     <span class="font-semibold ${statusClass}">${statusText}</span>
                 </td>
                 <td class="px-4 py-2 text-center">
-                    <a href="RegistrarDetails.html?id=${registrar.id}" class="bg-blue-500 text-white px-3 py-1 rounded-lg mr-2 hover:bg-blue-600">View</a>
                     <button class="edit-btn bg-green-500 text-white px-3 py-1 rounded-lg mr-2 hover:bg-green-600 disabled:bg-gray-400 disabled:cursor-not-allowed" data-id="${registrar.id}" ${!isActive ? 'disabled' : ''}>Edit</button>
                     <button class="delete-btn bg-red-500 text-white px-3 py-1 rounded-lg hover:bg-red-600 disabled:bg-gray-400 disabled:cursor-not-allowed" data-id="${registrar.id}" ${!isActive ? 'disabled' : ''}>Delete</button>
                 </td>
@@ -52,7 +51,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
     async function fetchAndPopulateCourts() {
         try {
-            const response = await fetch(courtsApiUrl);
+            const response = await fetch(courtsApiUrl,{
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
             if (!response.ok) throw new Error('Network response was not ok');
             const result = await response.json();
             allCourts = result.data || [];
@@ -62,7 +63,7 @@ document.addEventListener('DOMContentLoaded', function () {
             allCourts.filter(c => c.isActive).forEach(court => {
                 const option = document.createElement('option');
                 option.value = court.id;
-                option.textContent = `${court.name} - ${court.city}, ${court.state}`;
+                option.textContent = `${court.name}, ${court.state}`;
                 editCourtSelect.appendChild(option.cloneNode(true));
             });
         } catch (error) {
@@ -73,11 +74,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
     async function fetchRegistrars() {
         try {
-            // Fetch all registrars, including deleted ones, to show their status
-            const response = await fetch(`${registrarsApiUrl}?includeDeleted=true`);
+            const response = await fetch(`${registrarsApiUrl}`,{
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
             if (!response.ok) throw new Error('Network response was not ok');
             const result = await response.json();
-            allRegistrars = result.data || []; // The API returns an array of registrars in the 'data' property
+            allRegistrars = result.data || [];
             renderRegistrars(allRegistrars);
         } catch (error) {
             console.error('Failed to fetch registrars:', error);
@@ -93,12 +95,12 @@ document.addEventListener('DOMContentLoaded', function () {
              return;
 
         const updateData = { courtId: document.getElementById('editCourtId').value };
-
         try {
             const response = await fetch(`${registrarsApiUrl}/${registrarId}`, {
                 method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(updateData)
+                body: JSON.stringify(updateData),
+                headers: { 'Authorization': `Bearer ${token}`,
+                           'Content-Type': 'application/json' }
             });
             if (!response.ok) {
                 const errorData = await response.json();
@@ -141,8 +143,9 @@ document.addEventListener('DOMContentLoaded', function () {
             }).then(async (result) => {
                 if (result.isConfirmed) {
                     try {
-                        const response = await fetch(`https://localhost:7020/api/v1.0/Registrars/${registrarId}`, { 
-                            method: 'DELETE' 
+                        const response = await fetch(`https://localhost:7020/api/v1.0/Registrars/${registrarId}`, {
+                            method: 'DELETE',
+                            headers: { 'Authorization': `Bearer ${token}` }
                         });
                         if (!response.ok) throw new Error('Failed to delete registrar.');
                         Swal.fire('Deleted!', 'The registrar has been removed.', 'success');

@@ -6,12 +6,18 @@
     <title>Document</title>
     <link rel="stylesheet" href="scale of justice.png" type="image/x-icon">
       <script src="https://cdn.tailwindcss.com"></script>
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
     <div class="min-h-screen bg-gray-50 p-6">
-  <header class="mb-8">
-    <h1 class="text-3xl font-bold text-gray-800">Court Management</h1>
-    <p class="text-gray-600">Add, edit, and manage courts in the system.</p>
+  <header class="mb-8 flex justify-between items-center">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-800">Court Management</h1>
+      <p class="text-gray-600">Add, edit, and manage courts in the system.</p>
+    </div>
+    <a href="AdminDashboard.html" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-lg shadow-sm self-start">
+      ← Back to Dashboard
+    </a>
   </header>
 
   <section class="bg-white rounded-2xl shadow-md p-6 mb-10">
@@ -63,7 +69,6 @@
        <label class="block text-sm font-medium text-gray-700 mb-2">Jurisdictions</label>   
        <select name="JurisdictionIds" id="jurisdictionSelect" multiple required
           class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring focus:border-indigo-500 h-32">
-         <!-- Options will be populated by JS -->
        </select>
      </div>
       <div class="flex items-end">
@@ -128,10 +133,10 @@
       <input id="editCourtPhone" type="tel" class="w-full border rounded-lg px-3 py-2" required />
     </div>
     <div>
-      <label class="block text-sm font-medium text-gray-700 mb-2">Is Active</label>
-      <select id="editCourtIsActive" class="w-full border rounded-lg px-3 py-2" required>
-        <option value="true">Active</option>
-        <option value="false">Inactive</option>
+      <label for="editJurisdictionSelect" class="block text-sm font-medium text-gray-700 mb-2">Jurisdictions</label>
+      <select name="JurisdictionIds" id="editJurisdictionSelect" multiple required
+              class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring focus:border-indigo-500 h-32">
+        <!-- Options will be populated by JS -->
       </select>
     </div>
     <div class="flex items-end">
