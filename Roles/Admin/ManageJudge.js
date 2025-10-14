@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     async function fetchJudges() {
         try {
-            const response = await fetch(`${judgesApiUrl}?includeDeleted=true`);
+            const response = await fetch(`${judgesApiUrl}`);
             if (!response.ok) throw new Error('Network response was not ok');
             const result = await response.json();
             allJudges = result.data || [];

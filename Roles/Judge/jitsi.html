@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Video Room</title>
+    <script src="https://meet.jit.si/external_api.js"></script>
+</head>
+<body>
+    <h2>Join Room</h2>
+    <input type="text" id="roomName" placeholder="Enter room name">
+    <button onclick="startMeeting()">Join</button>
+
+    <div id="jitsi-container" style="width: 800px; height: 600px; margin-top: 20px;"></div>
+
+    <script>
+        function startMeeting() {
+            const roomName = document.getElementById("roomName").value;
+            const domain = "meet.jit.si";
+
+            const options = {
+                roomName,
+                width: 800,
+                height: 600,
+                parentNode: document.getElementById("jitsi-container"),
+                userInfo: {
+                    displayName: "Guest"
+                }
+            };
+
+            const api = new JitsiMeetExternalAPI(domain, options);
+        }
+    </script>
+</body>
+</html>

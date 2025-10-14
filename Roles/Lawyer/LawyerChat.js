@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const messagesArea = document.getElementById('messages-area');
     const messageForm = document.getElementById('message-form');
     const messageInput = document.getElementById('message-input');
+    const sendButton = messageForm.querySelector('button[type="submit"]');
     const searchInput = document.getElementById('search-conversations');
     const backToDashboardBtn = document.getElementById('back-to-dashboard');
     const noChatSelected = document.getElementById('no-chat-selected');
@@ -17,7 +18,7 @@ document.addEventListener('DOMContentLoaded', function () {
     let connection = null;
     let allConversations = [];
 
-    if (!token || !userRole || !currentUser) {
+    if (!token || userRole !== 'Lawyer' || !currentUser) {
         window.location.href = '/LoginPage/Login.html';
         return;
     }
@@ -25,10 +26,8 @@ document.addEventListener('DOMContentLoaded', function () {
     initializeChatPage();
 
     if (backToDashboardBtn) {
-        const isClient = userRole === 'Client';
-        const dashboardLink = isClient ? '/Roles/Client/Client.html' : '/Roles/Lawyer/Lawyer.html';
         backToDashboardBtn.addEventListener('click', () => {
-            window.location.href = dashboardLink;
+            window.location.href = '/Roles/Lawyer/Lawyer.html';
         });
     }
 
@@ -68,6 +67,9 @@ document.addEventListener('DOMContentLoaded', function () {
         connection.start()
             .then(() => {
                 console.log("SignalR Connected.");
+                if (activeConversationId) {
+                    connection.invoke("JoinChat", activeConversationId).catch(err => console.error(err));
+                }
             })
             .catch(err => console.error("SignalR Connection Error: ", err.toString()));
     }
@@ -180,7 +182,7 @@ document.addEventListener('DOMContentLoaded', function () {
         document.querySelectorAll('#conversations-list > div').forEach(el => el.classList.remove('bg-gray-200'));
         document.querySelector(`[data-conversation-id="${conversation.id}"]`)?.classList.add('bg-gray-200');
 
-        if (activeConversationId) {
+        if (activeConversationId && connection.state === "Connected") {
             connection.invoke("LeaveChat", activeConversationId).catch(err => console.error(err));
         }
         activeConversationId = conversation.id;
@@ -188,8 +190,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
         noChatSelected.classList.add('hidden');
         activeChatContainer.classList.remove('hidden');
-        messageForm.querySelector('button[type="submit"]').disabled = false;
         activeChatContainer.classList.add('flex');
+        sendButton.disabled = false;
 
         document.getElementById('chat-partner-name').textContent = conversation.partnerName;
         document.getElementById('chat-partner-avatar').src = getFullImageUrl(conversation.partnerAvatar);
@@ -229,7 +231,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const convElement = document.querySelector(`[data-conversation-id="${chatId}"]`);
         if (convElement) {
             convElement.querySelector('.text-gray-600').textContent = lastMessage;
-            convElement.querySelector('.text-gray-500').textContent = new Date(lastMessageAt).toLocaleDateString();
+            convElement.querySelector('.text-xs.text-gray-500').textContent = new Date(lastMessageAt).toLocaleDateString();
      
             conversationsList.prepend(convElement);
         }

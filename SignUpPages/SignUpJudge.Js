@@ -1,51 +1,60 @@
 document.addEventListener('DOMContentLoaded', function () {
     const form = document.getElementById('signupJudgeForm');
-  const togglePwdBtn = document.getElementById('togglePwd');
-  const passwordInput = document.getElementById('password');
-  const courtSelect = document.getElementById('CourtAssignedId');
+    const passwordInput = document.getElementById('password');
+    const togglePwdBtn = document.getElementById('togglePwd');
+    const courtSelect = document.getElementById('CourtAssignedId');
 
-    const defaultAvatar = '../assets/Avatar.png';
+    // --- Password Visibility Toggle ---
+    if (togglePwdBtn && passwordInput) {
+        togglePwdBtn.addEventListener('click', function () {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            this.textContent = type === 'password' ? 'Show' : 'Hide';
+        });
+    }
 
     // --- Populate Courts Dropdown ---
     async function populateCourts() {
         try {
-            const response = await fetch('https://localhost:7020/api/v1.0/Courts');
-            if (!response.ok) throw new Error('Failed to load courts');
-            
+            // Using the new 'active' endpoint for efficiency
+            const response = await fetch('https://localhost:7020/api/v1.0/Courts/active');
+            if (!response.ok) {
+                throw new Error('Failed to load courts');
+            }
             const result = await response.json();
-            if (result && Array.isArray(result.data)) {
+
+            // The API returns { isSuccess: bool, data: [...] }
+            if (result && result.isSuccess && Array.isArray(result.data)) {
                 courtSelect.innerHTML = '<option value="" disabled selected>Select a court</option>'; // Reset
-                result.data.filter(court => court.isActive).forEach(court => {
+                result.data.forEach(court => {
                     const option = document.createElement('option');
                     option.value = court.id;
                     option.textContent = `${court.name} - ${court.city}, ${court.state}`;
                     courtSelect.appendChild(option);
                 });
             } else {
-                 courtSelect.innerHTML = '<option value="" disabled>Could not load courts</option>';
+                 courtSelect.innerHTML = `<option value="" disabled>${result.message || 'Could not load courts'}</option>`;
             }
         } catch (error) {
             console.error('Error fetching courts:', error);
             courtSelect.innerHTML = '<option value="" disabled>Error loading courts</option>';
         }
     }
-    // --- Password Visibility Toggle ---
-  if (togglePwdBtn && passwordInput) {
-    togglePwdBtn.addEventListener('click', function () {
-      const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-      passwordInput.setAttribute('type', type);
-      this.textContent = type === 'password' ? 'Show' : 'Hide';
-    });
-  }
 
     // --- Profile Picture Preview ---
     const profilePicInput = document.getElementById('ProfilePictureUrl');
+    const ppPreviewWrap = document.getElementById('ppPreviewWrap');
     const ppPreview = document.getElementById('ppPreview');
+    const defaultAvatar = 'Avatar.png';
+
     profilePicInput.addEventListener('change', function () {
-        if (this.files && this.files[0]) {
+        if (profilePicInput.files.length > 0) {
+            const file = profilePicInput.files[0];
             const reader = new FileReader();
-            reader.onload = (e) => { ppPreview.src = e.target.result; };
-            reader.readAsDataURL(this.files[0]);
+            reader.onload = function (e) {
+                ppPreview.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
         } else {
             ppPreview.src = defaultAvatar;
         }
@@ -61,7 +70,11 @@ document.addEventListener('DOMContentLoaded', function () {
         const confirmPasswordError = document.getElementById('confirmPasswordError');
         if (password !== confirmPassword) {
             confirmPasswordError.classList.remove('hidden');
-            Swal.fire({ icon: 'error', title: 'Password Mismatch', text: 'Your passwords do not match!' });
+            Swal.fire({
+                icon: 'error',
+                title: 'Password Mismatch',
+                text: 'Your passwords do not match!'
+            });
             return;
         } else {
             confirmPasswordError.classList.add('hidden');
@@ -69,46 +82,53 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const formData = new FormData(form);
 
+        // API request to the Judges endpoint
         fetch('https://localhost:7020/api/v1.0/Judges', {
             method: 'POST',
             body: formData
         })
-        .then(res => {
-            if (!res.ok) return res.text().then(text => { throw new Error(text || 'Network response was not ok'); });
+        .then(async res => {
+            if (!res.ok) {
+                // Try to parse a structured error from the backend
+                const errorData = await res.json().catch(() => null);
+                const message = errorData?.message || `Request failed with status ${res.status}`;
+                throw new Error(message);
+            }
             return res.json();
         })
         .then(result => {
-            Swal.fire({
-                icon: 'success',
-                title: 'Signup Successful',
-                text: 'Your account has been created! Please check your email to verify your account.',
-                timer: 2500,
-                showConfirmButton: false
-            });
-            
-            localStorage.setItem('pendingEmail', form.elements['Email'].value);
-            sessionStorage.removeItem('otp_sent');
+            if (result && result.isSuccess) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Signup Successful',
+                    text: 'The judge account has been created! Please have them check their email to verify.',
+                    timer: 3000,
+                    showConfirmButton: false
+                });
+                // Store email for OTP verification page
+                localStorage.setItem('pendingEmail', form.elements['Email'].value);
+                sessionStorage.removeItem('otp_sent');
 
-            setTimeout(() => {
-                window.location.href = "/LoginPage/VerifyOtp.html";
-            }, 2500);
+                setTimeout(() => {
+                    window.location.href = "/LoginPage/VerifyOtp.html";
+                }, 3000);
 
-            form.reset();
-            ppPreview.src = defaultAvatar;
+                form.reset();
+                ppPreview.src = defaultAvatar;
+            } else {
+                 throw new Error(result.message || 'An unknown error occurred during signup.');
+            }
         })
         .catch(err => {
-            let errorMessage = "An unknown error occurred during signup.";
-            try {
-                const errorJson = JSON.parse(err.message);
-                errorMessage = errorJson.message || Object.values(errorJson.errors).flat().join('\n') || err.message;
-            } catch (e) {
-                errorMessage = err.message;
-            }
-
-            Swal.fire({ icon: 'error', title: 'Signup Failed', text: errorMessage });
+            Swal.fire({
+                icon: 'error',
+                title: 'Signup Failed',
+                text: err.message
+            });
             console.error('Fetch error:', err);
         });
     });
-    
+
+    // --- Initial Data Load ---
     populateCourts();
 });

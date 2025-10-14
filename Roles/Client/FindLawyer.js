@@ -48,15 +48,13 @@ document.addEventListener('DOMContentLoaded', function () {
         const specFilter = specializationFilter.value;
         const searchTerm = searchInput.value;
 
-        // We fetch only verified lawyers for clients. The enum for Verified is 1.
+        // We fetch only verified lawyers for clients. The enum for Verified is 0.
         let url = `https://localhost:7020/api/v1.0/Lawyers/search?verificationStatus=0&PageNumber=${page}&PageSize=${pageSize}`;
         if (specFilter !== 'all') {
             url += `&specialization=${specFilter}`;
         }
         if (searchTerm) {
-            // Assuming the backend search can handle a general query term.
-            // If it needs a specific parameter like 'name', adjust this.
-            url += `&university=${encodeURIComponent(searchTerm)}`; // Using 'university' as a proxy for a name search based on your API
+            url += `&university=${encodeURIComponent(searchTerm)}`;
         }
 
         try {

@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>JustiSync - Lawyer Dashboard</title>
+  <title>JustiSync - Registrar Dashboard</title>
   <link rel="shortcut icon" href="../GeneralDashboard/scale of justice.png" type="image/x-icon">
-  <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <style>
     :root {
@@ -13,34 +13,24 @@
       --js-accent: #f59e0b;
       --js-bg: #f3f4f6;
     }
-    @keyframes pulse-glow {
-      0%, 100% {
-        box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.7);
-        transform: scale(1);
-      }
-      50% {
-        box-shadow: 0 0 10px 5px rgba(245, 158, 11, 0);
-        transform: scale(1.05);
-      }
-    }
   </style>
 </head>
 <body class="bg-[var(--js-bg)] text-gray-800">
 
   <div class="flex min-h-screen">
-    <!-- Sidebar Navigation -->
+
     <aside class="w-64 bg-white shadow-md flex-shrink-0">
       <div class="p-6 bg-[var(--js-primary)] text-white">
         <h1 class="text-2xl font-bold">⚖️ JustiSync</h1>
       </div>
       <nav class="mt-6">
-        <a href="/Dashboard/Lawyer.html" class="flex items-center px-6 py-3 text-gray-700 bg-gray-200 font-semibold">
+        <a href="#" class="flex items-center px-6 py-3 text-gray-700 bg-gray-200 font-semibold">
           <svg class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
           Dashboard
         </a>
         <a href="#" class="flex items-center px-6 py-3 text-gray-600 hover:bg-gray-100">
           <svg class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-          My Cases
+          Manage Cases
         </a>
         <a href="#" class="flex items-center px-6 py-3 text-gray-600 hover:bg-gray-100">
           <svg class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
@@ -50,90 +40,76 @@
           <svg class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
           Profile
         </a>
-        <a href="/Roles/Lawyer/LawyerChat.html" class="flex items-center px-6 py-3 text-gray-600 hover:bg-gray-100">
-          <svg class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
-          Chat
-        </a>
-        <a href="/Roles/AiChat/AiChat.html" id="ai-chat-btn" class="relative flex items-center px-6 py-3 text-gray-600 hover:bg-gray-100 mt-4">
-          <span class="absolute left-4 top-2 h-3 w-3 rounded-full bg-[var(--js-accent)]" style="animation: pulse-glow 2s infinite;"></span>
-          <svg class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" /></svg>
-          AI Assistant
-        </a>
       </nav>
       <div class="absolute bottom-0 w-64">
         <button id="logout-btn" class="w-full flex items-center px-6 py-4 text-red-500 hover:bg-red-50">
           <svg class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
           Logout
         </button>
-</head>
-<body class="bg-[var(--js-bg)] text-gray-800">
       </div>
     </aside>
 
     <!-- Main Content -->
-    <main class="flex-1 p-8">
+    <main class="flex-1 p-4 sm:p-6 md:p-8">
       <!-- Header -->
       <header class="flex justify-between items-center mb-8">
         <div>
-          <h2 class="text-3xl font-bold text-gray-800">Welcome back, <span id="lawyer-name">Lawyer</span>!</h2>
-          <p class="text-gray-500">Here's an overview of your current workload.</p>
+          <h2 class="text-2xl md:text-3xl font-bold text-gray-800">Welcome, <span id="registrar-name">Registrar</span>!</h2>
+          <p class="text-gray-500">Court: <span id="court-name" class="font-semibold">Loading...</span></p>
         </div>
       </header>
 
       <!-- Stats Cards -->
-      <section class="grid md:grid-cols-3 gap-6 mb-8">
+      <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
         <div class="bg-white p-6 rounded-xl shadow-sm">
-          <h4 class="text-gray-500 font-medium">New Case Requests</h4>
-          <p id="stats-new-cases" class="text-3xl font-bold text-[var(--js-accent)]">0</p>
+          <h4 class="text-gray-500 font-medium">New Filings Today</h4>
+          <p id="stats-new-filings" class="text-3xl font-bold text-[var(--js-accent)]">0</p>
         </div>
         <div class="bg-white p-6 rounded-xl shadow-sm">
-          <h4 class="text-gray-500 font-medium">Active Cases</h4>
-          <p id="stats-active-cases" class="text-3xl font-bold text-[var(--js-primary)]">0</p>
+          <h4 class="text-gray-500 font-medium">Pending Approvals</h4>
+          <p id="stats-pending-approvals" class="text-3xl font-bold text-[var(--js-primary)]">0</p>
         </div>
         <div class="bg-white p-6 rounded-xl shadow-sm">
-          <h4 class="text-gray-500 font-medium">Upcoming Hearings</h4>
+          <h4 class="text-gray-500 font-medium">Scheduled Hearings</h4>
           <p id="stats-hearings" class="text-3xl font-bold text-[var(--js-primary)]">0</p>
         </div>
       </section>
 
-      <!-- Pending Case Filings Table -->
+      <!-- Pending Case Approvals Table -->
       <section class="bg-white rounded-xl shadow-sm p-6">
-        <h3 class="text-xl font-semibold text-gray-700 mb-4">Pending Case Filings</h3>
-        <p class="text-sm text-gray-500 mb-4">These cases were initiated by clients and require your action to complete the filing process.</p>
+        <h3 class="text-xl font-semibold text-gray-700 mb-4">Pending Case Approvals</h3>
         <div class="overflow-x-auto">
           <table class="w-full border-collapse">
             <thead>
               <tr class="bg-gray-50 text-gray-600 text-sm">
-                <th class="px-4 py-3 text-left font-medium">Client Name</th>
                 <th class="px-4 py-3 text-left font-medium">Case Title</th>
-                <th class="px-4 py-3 text-left font-medium">Category</th>
-                <th class="px-4 py-3 text-left font-medium">Date Initiated</th>
+                <th class="px-4 py-3 text-left font-medium">Lawyer</th>
+                <th class="px-4 py-3 text-left font-medium">Date Filed</th>
                 <th class="px-4 py-3 text-center font-medium">Actions</th>
               </tr>
             </thead>
             <tbody id="pending-cases-tbody">
               <!-- Placeholder Row -->
               <tr>
-                <td class="px-4 py-3 border-b font-semibold">John Doe</td>
-                <td class="px-4 py-3 border-b">Breach of Contract</td>
-                <td class="px-4 py-3 border-b">Civil</td>
-                <td class="px-4 py-3 border-b">2024-05-20</td>
+                <td class="px-4 py-3 border-b font-semibold">Civil Suit for Property Damage</td>
+                <td class="px-4 py-3 border-b">Barr. Adekunle Gold</td>
+                <td class="px-4 py-3 border-b">2024-05-21</td>
                 <td class="px-4 py-3 border-b text-center">
                   <a href="#" class="bg-[var(--js-primary)] text-white px-4 py-2 text-sm rounded-lg font-semibold hover:bg-blue-800 transition">
-                    Complete Filing
+                    Review Case
                   </a>
                 </td>
               </tr>
               <!-- End Placeholder -->
               <tr id="no-pending-cases-message" class="hidden">
-                <td colspan="5" class="text-center py-10 text-gray-500">
-                  You have no pending case filings.
+                <td colspan="4" class="text-center py-10 text-gray-500">
+                  You have no pending cases to review.
                 </td>
               </tr>
               <tr id="loading-spinner" class="">
-                <td colspan="5" class="text-center py-10">
+                <td colspan="4" class="text-center py-10">
                     <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-[var(--js-primary)] mx-auto"></div>
-                    <p class="mt-2 text-gray-500">Loading new requests...</p>
+                    <p class="mt-2 text-gray-500">Loading pending cases...</p>
                 </td>
               </tr>
             </tbody>
@@ -144,6 +120,6 @@
     </main>
   </div>
 
-  <script src="Lawyer.js"></script>
+  <script src="Registrar.js"></script>
 </body>
 </html>

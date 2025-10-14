@@ -1,10 +1,18 @@
 document.addEventListener('DOMContentLoaded', function () {
+    const token = localStorage.getItem('token');
+    if (!token) {
+        window.location.href = '/LoginPage/Login.html';
+        return;
+    }
+
     const lawyersApiUrl = 'https://localhost:7020/api/v1.0/Lawyers';
     const tableBody = document.getElementById('lawyersTableBody');
     const searchInput = document.getElementById('searchInput');
     const statusFilter = document.getElementById('statusFilter');
 
     let allLawyers = [];
+
+    // --- MAPPINGS & HELPERS ---
 
     const specializationMap = {
         0: 'Criminal Law',
@@ -13,12 +21,21 @@ document.addEventListener('DOMContentLoaded', function () {
         3: 'Corporate Law'
     };
 
-    const verificationStatusMap = {
-        0: { text: 'Verified', class: 'bg-yellow-200 text-yellow-800' },
-        1: { text: 'Rejected', class: 'bg-green-200 text-green-800' },
-        2: { text: 'Pending', class: 'bg-red-200 text-red-800' }
-    };
+    function getStatusInfo(lawyer) {
+        if (lawyer.isVerified) {
+            return { text: 'Verified', class: 'bg-green-200 text-green-800' };
+        }
+        if (lawyer.isRejected) {
+            return { text: 'Rejected', class: 'bg-red-200 text-red-800' };
+        }
+        return { text: 'Pending', class: 'bg-yellow-200 text-yellow-800' };
+    }
 
+    // --- RENDERING ---
+
+    /**
+     * Renders a list of lawyers into the table.
+     */
     function renderLawyers(lawyersToRender) {
         tableBody.innerHTML = '';
         if (!lawyersToRender || lawyersToRender.length === 0) {
@@ -29,8 +46,7 @@ document.addEventListener('DOMContentLoaded', function () {
         lawyersToRender.forEach(lawyer => {
             const fullName = `${lawyer.firstName || ''} ${lawyer.lastName || ''}`.trim();
             const specializationText = specializationMap[lawyer.lawyerSpecialization] || 'N/A';
-            
-            const statusInfo = verificationStatusMap[lawyer.verificationStatus];
+            const statusInfo = getStatusInfo(lawyer);
 
             const row = document.createElement('tr');
             row.className = 'border-b hover:bg-gray-50';
@@ -52,6 +68,11 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+    // --- FILTERING & DATA FETCHING ---
+
+    /**
+     * Filters the currently loaded lawyers based on search and status dropdowns.
+     */
     function filterAndSearch() {
         const searchTerm = searchInput.value.toLowerCase();
         const status = statusFilter.value;
@@ -74,9 +95,14 @@ document.addEventListener('DOMContentLoaded', function () {
         renderLawyers(filteredLawyers);
     }
 
+    /**
+     * Fetches all lawyers from the API.
+     */
     async function fetchLawyers() {
         try {
-            const response = await fetch(lawyersApiUrl);
+            const response = await fetch(lawyersApiUrl, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
             if (!response.ok) throw new Error('Failed to fetch lawyers.');
             const result = await response.json();
             allLawyers = result.data || [];
@@ -87,8 +113,16 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
+    // --- EVENT LISTENERS & INITIALIZATION ---
+
     searchInput.addEventListener('input', filterAndSearch);
     statusFilter.addEventListener('change', filterAndSearch);
 
-    fetchLawyers();
+    // Use 'pageshow' to refetch data when navigating back to the page.
+    // This ensures the list is always up-to-date after an action on the details page.
+    window.addEventListener('pageshow', function(event) {
+        // The 'persisted' property is true if the page is from the back/forward cache.
+        // We fetch on initial load (persisted is false) and on back navigation (persisted is true).
+        fetchLawyers();
+    });
 });

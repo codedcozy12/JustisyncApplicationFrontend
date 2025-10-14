@@ -1,25 +1,34 @@
 document.addEventListener('DOMContentLoaded', function () {
+    const token = localStorage.getItem('token');
     const container = document.getElementById('lawyer-details-container');
     const loadingMessage = document.getElementById('loading-message');
     const lawyersApiUrl = 'https://localhost:7020/api/v1.0/Lawyers';
 
     const urlParams = new URLSearchParams(window.location.search);
     const lawyerId = urlParams.get('id');
-
+    
+    // --- PRE-FLIGHT CHECKS ---
+    if (!token) {
+        window.location.href = '/LoginPage/Login.html';
+        return;
+    }
+    
     if (!lawyerId) {
+        loadingMessage.style.display = 'none';
         container.innerHTML = '<p class="text-center text-red-500">No lawyer ID provided.</p>';
         return;
     }
 
+    // --- HELPER FUNCTIONS ---
     const getFullImageUrl = (url) => {
-        const defaultAvatar = '../assets/Avatar.png';
+        const defaultAvatar = '../../assets/Avatar.png'; // Corrected path
         if (!url) return defaultAvatar;
         if (url.startsWith('http')) return url;
         return `https://localhost:7020/UserImages/Images/${url.replace(/^\//, '')}`;
     };
    
     const getCertificateFullImageUrl = (url) => {
-        const defaultAvatar = '/';
+        const defaultAvatar = '#'; // Use '#' for a non-functional link if URL is missing
         if (!url) return defaultAvatar;
         if (url.startsWith('http')) return url;
         return `https://localhost:7020/Certificate/Images/${url.replace(/^\//, '')}`;
@@ -34,12 +43,11 @@ document.addEventListener('DOMContentLoaded', function () {
             isRejected: !isApproved
         };
 
-        fetch(endpoint, { 
+        fetch(endpoint, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
-                // Assuming you need an auth token for this endpoint
-                'Authorization': `Bearer ${localStorage.getItem('token')}`
+                'Authorization': `Bearer ${token}`
             },
             body: JSON.stringify(requestBody)
         })
@@ -72,15 +80,13 @@ document.addEventListener('DOMContentLoaded', function () {
             .catch(error => Swal.fire('Error', error.message, 'error'));
     }
 
-    fetch(`${lawyersApiUrl}/${lawyerId}`)
-        .then(res => {
-            if (!res.ok) throw new Error('Lawyer not found or failed to load data.');
-            return res.json();
-        })
-        .then(result => {
-            loadingMessage.style.display = 'none';
-            const lawyer = result.data;
-
+    /**
+     * Renders the lawyer's details onto the page.
+     * @param {object} lawyer - The lawyer data object.
+     */
+    function renderLawyerDetails(lawyer) {
+        try {
+            // --- Data Mapping ---
             const specializationMap = {
                 0: 'Criminal Law',
                 1: 'Civil Law',
@@ -99,6 +105,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 statusClass = 'bg-red-200 text-red-800';
             }
 
+            // --- HTML Template ---
             const detailsHtml = `
                 <div class="flex flex-col md:flex-row items-center gap-8">
                     <div class="flex-shrink-0">
@@ -136,11 +143,46 @@ document.addEventListener('DOMContentLoaded', function () {
                 </div>
             `;
             container.innerHTML = detailsHtml;
-            document.getElementById('approve-btn').addEventListener('click', () => handleVerification('approve'));
-            document.getElementById('reject-btn').addEventListener('click', () => handleVerification('reject'));
-        })
-        .catch(error => {
-            loadingMessage.style.display = 'none';
+
+            // --- Add Event Listeners Safely ---
+            const approveBtn = document.getElementById('approve-btn');
+            const rejectBtn = document.getElementById('reject-btn');
+
+            if (approveBtn) {
+                approveBtn.addEventListener('click', () => handleVerification('approve'));
+            }
+            if (rejectBtn) {
+                rejectBtn.addEventListener('click', () => handleVerification('reject'));
+            }
+        } catch (error) {
+            console.error("Error rendering lawyer details:", error);
+            container.innerHTML = `<p class="text-center text-red-500">An error occurred while displaying the lawyer's details.</p>`;
+        }
+    }
+
+    /**
+     * Fetches lawyer data from the API and initiates rendering.
+     */
+    async function fetchLawyerDetails() {
+        try {
+            const response = await fetch(`${lawyersApiUrl}/${lawyerId}`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (!response.ok) throw new Error('Lawyer not found or failed to load data.');
+            
+            const result = await response.json();
+            if (result.isSuccess && result.data) {
+                renderLawyerDetails(result.data);
+            } else {
+                throw new Error(result.message || 'Could not retrieve lawyer data.');
+            }
+        } catch (error) {
             container.innerHTML = `<p class="text-center text-red-500">${error.message}</p>`;
-        });
+        } finally {
+            loadingMessage.style.display = 'none';
+        }
+    }
+
+    // --- INITIALIZATION ---
+    fetchLawyerDetails();
 });
